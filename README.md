@@ -18,13 +18,13 @@ Bacon ipsum dolor amet tempor ex venison tongue, cillum sausage sunt prosciutto.
 
 ### ✨ Features
 
-- Where, WhereNot
-- NonNull, NonNullRef
-- Select
-- OfType, OfTypeRef
-- Count
-- ToArray
-- ToSet
+- `Where`, `WhereNot`
+- `NonNull`, `NonNullRef`
+- `Select`
+- `OfType<T>`, `OfTypeRef<T>`
+- `Count`
+- `ToArray`
+- `ToSet`
 
 ----
 
