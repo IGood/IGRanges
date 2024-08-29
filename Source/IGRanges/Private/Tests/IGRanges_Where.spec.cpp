@@ -18,9 +18,9 @@ constexpr struct FMyNumber
 	{
 	}
 
-	int32 N;
+	const int32 N = 0;
 
-	bool bIsEven;
+	const bool bIsEven = true;
 
 	constexpr bool IsEven() const { return N % 2 == 0; }
 };
@@ -94,7 +94,7 @@ void FIGRangesWhereSpec::Define()
 	});
 
 	// `WhereNot` accepts function pointers as a predicate.
-	It("function_pointer", [this]() {
+	It("function_pointer (not)", [this]() {
 		TestCallable(std::not_fn(&StaticIsEven), WhereNot(&StaticIsEven));
 	});
 
@@ -107,12 +107,12 @@ void FIGRangesWhereSpec::Define()
 		TestCallable(std::not_fn(IsEven), WhereNot(IsEven));
 	});
 
-	// `Where` accepts member field pointers as a predicate.
+	// `WhereNot` accepts member field pointers as a predicate.
 	It("member_field_pointer (not)", [this]() {
 		TestCallable(std::not_fn(std::mem_fn(&FMyNumber::bIsEven)), WhereNot(&FMyNumber::bIsEven));
 	});
 
-	// `Where` accepts member function pointers as a predicate.
+	// `WhereNot` accepts member function pointers as a predicate.
 	It("member_function_pointer (not)", [this]() {
 		TestCallable(std::not_fn(std::mem_fn(&FMyNumber::IsEven)), WhereNot(&FMyNumber::IsEven));
 	});
