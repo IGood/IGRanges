@@ -2,7 +2,7 @@
  
  [![MIT License](https://img.shields.io/badge/license-MIT-green.svg?style=flat-square)](/LICENSE)
 
-IGRanges is an Unreal Engine 5 plugin that leverages the [Ranges library (C++20)](https://en.cppreference.com/w/cpp/ranges) to provide LINQ (C#) style code patterns.
+IGRanges is an Unreal Engine 5 plugin that leverages the [Ranges library (C++20)](https://en.cppreference.com/w/cpp/ranges) to provide [LINQ (C#)](https://learn.microsoft.com/en-us/dotnet/csharp/linq/) style code patterns.
 
 ----
 
@@ -32,3 +32,4 @@ Bacon ipsum dolor amet tempor ex venison tongue, cillum sausage sunt prosciutto.
 
 - [Ranges library (C++20)](https://en.cppreference.com/w/cpp/ranges)
 - [\<ranges\> | Microsoft Learn](https://learn.microsoft.com/en-us/cpp/standard-library/ranges)
+- [Language Integrated Query (LINQ) - C# | Microsoft Learn](https://learn.microsoft.com/en-us/dotnet/csharp/linq/)
