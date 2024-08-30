@@ -21,12 +21,12 @@ template <class T>
 	return std::views::transform([](auto&& x) { return ::CastExact<T>(x); });
 }
 
-[[nodiscard]] constexpr auto NonNull()
+[[nodiscard]] inline constexpr auto NonNull()
 {
 	return std::views::filter([](auto* x) { return x != nullptr; });
 }
 
-[[nodiscard]] constexpr auto NonNullRef()
+[[nodiscard]] inline constexpr auto NonNullRef()
 {
 	return NonNull() | std::views::transform([](auto* x) -> decltype(*x)& { return *x; });
 }
