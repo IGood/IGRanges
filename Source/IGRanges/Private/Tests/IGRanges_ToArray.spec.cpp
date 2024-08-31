@@ -53,7 +53,13 @@ void FIGRangesToArraySpec::Define()
 			ExpectedArray.Emplace(Square(X));
 		}
 
-		const TArray<int32> TestMe = SomeValues | std::views::transform(Square) | ToArray();
+		TArray<int32> TestMe = SomeValues | std::views::transform(Square) | ToArray();
+
+		TestEqual("count", TestMe.Num(), NumSomeValues);
+		TestEqual("capacity", TestMe.Max(), NumSomeValues);
+		TestEqual("contents", TestMe, ExpectedArray);
+
+		TestMe = ToArray(SomeValues, Square);
 
 		TestEqual("count", TestMe.Num(), NumSomeValues);
 		TestEqual("capacity", TestMe.Max(), NumSomeValues);

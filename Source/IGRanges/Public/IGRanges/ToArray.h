@@ -35,19 +35,19 @@ template <typename RangeType>
 	auto Array = Private::MakeArray(Range);
 	for (auto&& X : Range)
 	{
-		Array.Emplace(MoveTempIfPossible(X));
+		Array.Emplace(X);
 	}
 
 	return Array;
 }
 
 template <typename RangeType, typename ProjectionType>
-[[nodiscard]] auto ToArray(RangeType&& Range, ProjectionType Proj)
+[[nodiscard]] auto ToArray(RangeType&& Range, ProjectionType&& Proj)
 {
 	auto Array = Private::MakeArray(Range);
 	for (auto&& X : Range)
 	{
-		Array.Emplace(std::invoke(Proj, MoveTempIfPossible(X)));
+		Array.Emplace(std::invoke(Proj, X));
 	}
 
 	return Array;

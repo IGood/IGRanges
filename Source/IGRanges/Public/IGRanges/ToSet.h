@@ -32,22 +32,22 @@ template <typename RangeType>
 template <typename RangeType>
 [[nodiscard]] auto ToSet(RangeType&& Range)
 {
-	auto Array = Private::MakeSet(Range);
+	auto Set = Private::MakeSet(Range);
 	for (auto&& X : Range)
 	{
-		Array.Emplace(MoveTempIfPossible(X));
+		Set.Emplace(X);
 	}
 
-	return Array;
+	return Set;
 }
 
 template <typename RangeType, typename ProjectionType>
-[[nodiscard]] auto ToSet(RangeType&& Range, ProjectionType Proj)
+[[nodiscard]] auto ToSet(RangeType&& Range, ProjectionType&& Proj)
 {
 	auto Set = Private::MakeSet(Range);
 	for (auto&& X : Range)
 	{
-		Set.Emplace(std::invoke(Proj, MoveTempIfPossible(X)));
+		Set.Emplace(std::invoke(Proj, X));
 	}
 
 	return Set;

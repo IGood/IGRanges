@@ -38,6 +38,31 @@ void FIGRangesToSetSpec::Define()
 		TestEqual("count", TestMe.Num(), ExpectedSet.Num());
 		TestTrue("equal sets", TestMe.Difference(ExpectedSet).IsEmpty());
 	});
+
+	// `ToSet` produces a set equal to traditional `TSet` usage.
+	// (works even with transformations)
+	It("many_transformed", [this]() {
+		const auto Square = [](auto&& x) {
+			return x * x;
+		};
+
+		TSet<int32> ExpectedSet;
+		ExpectedSet.Reserve(NumSomeValues);
+		for (auto&& X : SomeValues)
+		{
+			ExpectedSet.Emplace(Square(X));
+		}
+
+		TSet<int32> TestMe = SomeValues | std::views::transform(Square) | ToSet();
+
+		TestEqual("count", TestMe.Num(), ExpectedSet.Num());
+		TestTrue("equal sets", TestMe.Difference(ExpectedSet).IsEmpty());
+
+		TestMe = ToSet(SomeValues, Square);
+
+		TestEqual("count", TestMe.Num(), ExpectedSet.Num());
+		TestTrue("equal sets", TestMe.Difference(ExpectedSet).IsEmpty());
+	});
 }
 
 #endif // WITH_DEV_AUTOMATION_TESTS
