@@ -22,6 +22,7 @@ Bacon ipsum dolor amet tempor ex venison tongue, cillum sausage sunt prosciutto.
 - `NonNull`, `NonNullRef`
 - `Select`
 - `OfType<T>`, `OfTypeRef<T>`
+- `FirstOrDefault`
 - `Count`
 - `ToArray`
 - `ToSet`
