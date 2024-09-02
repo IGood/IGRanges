@@ -53,17 +53,19 @@ void FIGRangesToArraySpec::Define()
 			ExpectedArray.Emplace(Square(X));
 		}
 
+		const auto TestArray = [&, this](const auto& A) {
+			TestEqual("count", A.Num(), NumSomeValues);
+			TestEqual("capacity", A.Max(), NumSomeValues);
+			TestEqual("contents", A, ExpectedArray);
+		};
+
+		// `ToArray` with 0 arguments (just creates an array from the view).
 		TArray<int32> TestMe = SomeValues | std::views::transform(Square) | ToArray();
+		TestArray(TestMe);
 
-		TestEqual("count", TestMe.Num(), NumSomeValues);
-		TestEqual("capacity", TestMe.Max(), NumSomeValues);
-		TestEqual("contents", TestMe, ExpectedArray);
-
-		TestMe = ToArray(SomeValues, Square);
-
-		TestEqual("count", TestMe.Num(), NumSomeValues);
-		TestEqual("capacity", TestMe.Max(), NumSomeValues);
-		TestEqual("contents", TestMe, ExpectedArray);
+		// `ToArray` with 1 transformation argument (applies the transformation).
+		TestMe = SomeValues | ToArray(Square);
+		TestArray(TestMe);
 	});
 
 	// `ToArray` with a range whose size is unknown produces an array with count & capacity consistent with traditional

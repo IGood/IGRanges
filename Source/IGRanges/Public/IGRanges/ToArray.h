@@ -3,65 +3,47 @@
 #pragma once
 
 #include "Containers/Array.h"
+#include "IGRanges/Select.h"
 #include <ranges>
 
 namespace IG::Ranges
 {
 namespace Private
 {
-struct ToArrayToken
+struct ToArray_fn
 {
-};
-
-template <typename RangeType>
-[[nodiscard]] auto MakeArray(const RangeType& Range)
-{
-	using T = std::ranges::range_value_t<RangeType>;
-	TArray<T> Array;
-
-	if constexpr (std::ranges::sized_range<RangeType>)
+	template <typename RangeType>
+	[[nodiscard]] constexpr auto operator()(RangeType&& Range) const
 	{
-		Array.Reserve(std::ranges::distance(Range));
-	}
+		using T = std::ranges::range_value_t<RangeType>;
+		TArray<T> Array;
 
-	return Array;
-}
+		if constexpr (std::ranges::sized_range<RangeType>)
+		{
+			Array.Reserve(std::ranges::distance(Range));
+		}
+
+		for (auto&& X : Range)
+		{
+			Array.Emplace(X);
+		}
+
+		return Array;
+	}
+};
 
 } // namespace Private
 
-template <typename RangeType>
-[[nodiscard]] auto ToArray(RangeType&& Range)
+[[nodiscard]] constexpr auto ToArray()
 {
-	auto Array = Private::MakeArray(Range);
-	for (auto&& X : Range)
-	{
-		Array.Emplace(X);
-	}
-
-	return Array;
+	return std::ranges::_Range_closure<IG::Ranges::Private::ToArray_fn>{};
 }
-
-template <typename RangeType, typename ProjectionType>
-[[nodiscard]] auto ToArray(RangeType&& Range, ProjectionType&& Proj)
+template <class _Fn>
+[[nodiscard]] constexpr auto ToArray(_Fn&& _Fun)
 {
-	auto Array = Private::MakeArray(Range);
-	for (auto&& X : Range)
-	{
-		Array.Emplace(std::invoke(Proj, X));
-	}
-
-	return Array;
-}
-
-[[nodiscard]] inline constexpr Private::ToArrayToken ToArray()
-{
-	return {};
+	// Use `Select` to take advantage of overloads for "callable" or "member pointer".
+	return IG::Ranges::Select(std::forward<_Fn>(_Fun))
+		 | std::ranges::_Range_closure<IG::Ranges::Private::ToArray_fn>{};
 }
 
 } // namespace IG::Ranges
-
-template <typename RangeType>
-[[nodiscard]] auto operator|(RangeType&& Range, IG::Ranges::Private::ToArrayToken)
-{
-	return IG::Ranges::ToArray(std::forward<RangeType>(Range));
-}
