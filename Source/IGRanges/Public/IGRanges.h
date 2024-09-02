@@ -4,6 +4,7 @@
 
 #include "IGRanges/CPOs.h"
 #include "IGRanges/Count.h"
+#include "IGRanges/FirstOrDefault.h"
 #include "IGRanges/NonNull.h"
 #include "IGRanges/OfType.h"
 #include "IGRanges/Select.h"
