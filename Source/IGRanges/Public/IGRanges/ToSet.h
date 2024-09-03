@@ -3,8 +3,9 @@
 #pragma once
 
 #include "Containers/Set.h"
-#include "IGRanges/Select.h"
 #include <ranges>
+
+#define _IGRP IG::Ranges::Private::
 
 namespace IG::Ranges
 {
@@ -36,14 +37,16 @@ struct ToSet_fn
 
 [[nodiscard]] constexpr auto ToSet()
 {
-	return std::ranges::_Range_closure<IG::Ranges::Private::ToSet_fn>{};
+	return std::ranges::_Range_closure<_IGRP ToSet_fn>{};
 }
 
 template <typename TransformT>
 [[nodiscard]] constexpr auto ToSet(TransformT&& Trans)
 {
-	// Use `Select` to take advantage of overloads for "callable" or "member pointer".
-	return IG::Ranges::Select(std::forward<TransformT>(Trans)) | IG::Ranges::ToSet();
+	return std::views::transform(std::forward<TransformT>(Trans))
+		 | IG::Ranges::ToSet();
 }
 
 } // namespace IG::Ranges
+
+#undef _IGRP

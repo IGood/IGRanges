@@ -30,14 +30,26 @@ static bool StaticIsEven(const FMyNumber& X)
 	return X.N % 2 == 0;
 };
 
+template <typename PredicateT>
+bool TestCallable(PredicateT&& Predicate)
+{
+	using namespace IG::Ranges;
+	return TestCallableImpl(std::forward<PredicateT>(Predicate), Where(std::forward<PredicateT>(Predicate)));
+}
+
+template <typename PredicateT>
+bool TestCallableNot(PredicateT&& Predicate)
+{
+	using namespace IG::Ranges;
+	return TestCallableImpl(std::not_fn(std::forward<PredicateT>(Predicate)), WhereNot(std::forward<PredicateT>(Predicate)));
+}
+
 /**
  * Tests that a `Where` or `WhereNot` filter behaves the same as using a predicate directly.
  */
 template <typename PredicateT, typename WhereFilterT>
-bool TestCallable(PredicateT&& Predicate, WhereFilterT&& WhereFilter)
+bool TestCallableImpl(PredicateT&& Predicate, WhereFilterT&& WhereFilter)
 {
-	using namespace IG::Ranges;
-
 	static constexpr FMyNumber SomeNumbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 	static constexpr int32 NumSomeNumbers = UE_ARRAY_COUNT(SomeNumbers);
 
@@ -51,7 +63,7 @@ bool TestCallable(PredicateT&& Predicate, WhereFilterT&& WhereFilter)
 	}
 
 	int i = -1;
-	for (auto&& X : SomeNumbers | std::forward<WhereFilterT>(WhereFilter))
+	for (auto&& X : SomeNumbers | WhereFilter)
 	{
 		++i;
 		UTEST_TRUE_EXPR(ExpectedValues.IsValidIndex(i));
@@ -71,7 +83,7 @@ void FIGRangesWhereSpec::Define()
 
 	// `Where` accepts function pointers as a predicate.
 	It("function_pointer", [this]() {
-		TestCallable(&StaticIsEven, Where(&StaticIsEven));
+		TestCallable(&StaticIsEven);
 	});
 
 	// `Where` accepts function objects as a predicate.
@@ -80,22 +92,22 @@ void FIGRangesWhereSpec::Define()
 			return x.N % 2 == 0;
 		};
 
-		TestCallable(IsEven, Where(IsEven));
+		TestCallable(IsEven);
 	});
 
 	// `Where` accepts member field pointers as a predicate.
 	It("member_field_pointer", [this]() {
-		TestCallable(std::mem_fn(&FMyNumber::bIsEven), Where(&FMyNumber::bIsEven));
+		TestCallable(&FMyNumber::bIsEven);
 	});
 
 	// `Where` accepts member function pointers as a predicate.
 	It("member_function_pointer", [this]() {
-		TestCallable(std::mem_fn(&FMyNumber::IsEven), Where(&FMyNumber::IsEven));
+		TestCallable(&FMyNumber::IsEven);
 	});
 
 	// `WhereNot` accepts function pointers as a predicate.
 	It("function_pointer (not)", [this]() {
-		TestCallable(std::not_fn(&StaticIsEven), WhereNot(&StaticIsEven));
+		TestCallableNot(&StaticIsEven);
 	});
 
 	// `WhereNot` accepts function objects as a predicate.
@@ -104,17 +116,17 @@ void FIGRangesWhereSpec::Define()
 			return x.N % 2 == 0;
 		};
 
-		TestCallable(std::not_fn(IsEven), WhereNot(IsEven));
+		TestCallableNot(IsEven);
 	});
 
 	// `WhereNot` accepts member field pointers as a predicate.
 	It("member_field_pointer (not)", [this]() {
-		TestCallable(std::not_fn(std::mem_fn(&FMyNumber::bIsEven)), WhereNot(&FMyNumber::bIsEven));
+		TestCallableNot(&FMyNumber::bIsEven);
 	});
 
 	// `WhereNot` accepts member function pointers as a predicate.
 	It("member_function_pointer (not)", [this]() {
-		TestCallable(std::not_fn(std::mem_fn(&FMyNumber::IsEven)), WhereNot(&FMyNumber::IsEven));
+		TestCallableNot(&FMyNumber::IsEven);
 	});
 }
 

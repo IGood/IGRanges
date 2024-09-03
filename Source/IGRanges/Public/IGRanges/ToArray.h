@@ -3,8 +3,9 @@
 #pragma once
 
 #include "Containers/Array.h"
-#include "IGRanges/Select.h"
 #include <ranges>
+
+#define _IGRP IG::Ranges::Private::
 
 namespace IG::Ranges
 {
@@ -36,14 +37,16 @@ struct ToArray_fn
 
 [[nodiscard]] constexpr auto ToArray()
 {
-	return std::ranges::_Range_closure<IG::Ranges::Private::ToArray_fn>{};
+	return std::ranges::_Range_closure<_IGRP ToArray_fn>{};
 }
 
 template <typename TransformT>
 [[nodiscard]] constexpr auto ToArray(TransformT&& Trans)
 {
-	// Use `Select` to take advantage of overloads for "callable" or "member pointer".
-	return IG::Ranges::Select(std::forward<TransformT>(Trans)) | IG::Ranges::ToArray();
+	return std::views::transform(std::forward<TransformT>(Trans))
+		 | IG::Ranges::ToArray();
 }
 
 } // namespace IG::Ranges
+
+#undef _IGRP

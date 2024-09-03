@@ -38,8 +38,8 @@ static double StaticSquare(const FMyNumber& X)
 /**
  * Tests that a `Select` tranformation behaves the same as using a transformation directly.
  */
-template <typename TransformT, typename SelectTransformT>
-bool TestCallable(TransformT&& Transform, SelectTransformT&& SelectTransform)
+template <typename TransformT>
+bool TestCallable(TransformT&& Transform)
 {
 	using namespace IG::Ranges;
 
@@ -54,7 +54,7 @@ bool TestCallable(TransformT&& Transform, SelectTransformT&& SelectTransform)
 	}
 
 	int i = -1;
-	for (auto&& X : SomeNumbers | std::forward<SelectTransformT>(SelectTransform))
+	for (auto&& X : SomeNumbers | Select(Transform))
 	{
 		++i;
 		UTEST_TRUE_EXPR(ExpectedValues.IsValidIndex(i));
@@ -70,11 +70,9 @@ END_DEFINE_SPEC(FIGRangesSelectSpec)
 
 void FIGRangesSelectSpec::Define()
 {
-	using namespace IG::Ranges;
-
 	// `Select` accepts function pointers as a transformation.
 	It("function_pointer", [this]() {
-		TestCallable(&StaticSquare, Select(&StaticSquare));
+		TestCallable(&StaticSquare);
 	});
 
 	// `Select` accepts function objects as a transformation.
@@ -83,17 +81,17 @@ void FIGRangesSelectSpec::Define()
 			return SquareD(x.N);
 		};
 
-		TestCallable(Square, Select(Square));
+		TestCallable(Square);
 	});
 
 	// `Select` accepts member field pointers as a transformation.
 	It("member_field_pointer", [this]() {
-		TestCallable(std::mem_fn(&FMyNumber::Squared), Select(&FMyNumber::Squared));
+		TestCallable(&FMyNumber::Squared);
 	});
 
 	// `Select` accepts member function pointers as a transformation.
 	It("member_function_pointer", [this]() {
-		TestCallable(std::mem_fn(&FMyNumber::Square), Select(&FMyNumber::Square));
+		TestCallable(&FMyNumber::Square);
 	});
 }
 
