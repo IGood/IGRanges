@@ -38,6 +38,7 @@ struct ToArray_fn
 {
 	return std::ranges::_Range_closure<IG::Ranges::Private::ToArray_fn>{};
 }
+
 template <typename TransformT>
 [[nodiscard]] constexpr auto ToArray(TransformT&& Trans)
 {

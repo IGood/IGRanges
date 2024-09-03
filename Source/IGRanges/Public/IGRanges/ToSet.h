@@ -38,6 +38,7 @@ struct ToSet_fn
 {
 	return std::ranges::_Range_closure<IG::Ranges::Private::ToSet_fn>{};
 }
+
 template <typename TransformT>
 [[nodiscard]] constexpr auto ToSet(TransformT&& Trans)
 {
