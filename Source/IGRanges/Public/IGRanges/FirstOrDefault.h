@@ -10,61 +10,42 @@ namespace IG::Ranges
 {
 namespace Private
 {
-struct FirstOrDefaultToken
+struct FirstOrDefault_fn
 {
+	template <typename RangeType, class _Pr>
+	[[nodiscard]] constexpr auto operator()(RangeType&& Range, _Pr&& _Pred) const
+	{
+		using T = std::ranges::range_value_t<RangeType>;
+
+		static_assert(!TIsTSharedRef_V<T>, "`FirstOrDefault` cannot operate on ranges of `TSharedRef`.");
+
+		for (auto&& X : Range)
+		{
+			if (std::invoke(_Pred, X))
+			{
+				return X;
+			}
+		}
+
+		return T{};
+	}
 };
 
 inline constexpr auto AlwaysTrue = [](auto&&) {
 	return true;
 };
 
-template <typename RangeType, class _Pr>
-[[nodiscard]] auto FirstOrDefault(RangeType&& Range, _Pr&& _Pred)
-{
-	using T = std::ranges::range_value_t<RangeType>;
-
-	static_assert(!TIsTSharedRef_V<T>, "`FirstOrDefault` cannot operate on ranges of `TSharedRef`.");
-
-	for (auto&& X : Range)
-	{
-		if (std::invoke(_Pred, X))
-		{
-			return X;
-		}
-	}
-
-	return T{};
-}
-
 } // namespace Private
 
-template <typename RangeType>
-[[nodiscard]] auto FirstOrDefault(RangeType&& Range)
+template <class _Pr>
+[[nodiscard]] constexpr auto FirstOrDefault(_Pr&& _Pred)
 {
-	return Private::FirstOrDefault(std::forward<RangeType>(Range), Private::AlwaysTrue);
+	return std::ranges::_Range_closure<IG::Ranges::Private::FirstOrDefault_fn, std::decay_t<_Pr>>{std::forward<_Pr>(_Pred)};
 }
 
-template <typename RangeType, class _Pr>
-[[nodiscard]] auto FirstOrDefault(RangeType&& Range, _Pr&& _Pred)
+[[nodiscard]] constexpr auto FirstOrDefault()
 {
-	return Private::FirstOrDefault(std::forward<RangeType>(Range), std::forward<_Pr>(_Pred));
-}
-
-template <typename RangeType, class _Rx, class _Ty>
-[[nodiscard]] auto FirstOrDefault(RangeType&& Range, _Rx _Ty::*_Pm)
-{
-	return Private::FirstOrDefault(std::forward<RangeType>(Range), std::mem_fn(_Pm));
-}
-
-[[nodiscard]] inline constexpr Private::FirstOrDefaultToken FirstOrDefault()
-{
-	return {};
+	return FirstOrDefault(IG::Ranges::Private::AlwaysTrue);
 }
 
 } // namespace IG::Ranges
-
-template <typename RangeType>
-[[nodiscard]] constexpr auto operator|(RangeType&& Range, IG::Ranges::Private::FirstOrDefaultToken)
-{
-	return IG::Ranges::Private::FirstOrDefault(std::forward<RangeType>(Range), IG::Ranges::Private::AlwaysTrue);
-}

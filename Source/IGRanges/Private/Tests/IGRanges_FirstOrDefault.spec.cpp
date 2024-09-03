@@ -81,7 +81,7 @@ void TestFilteredRange(const FString& What, RangeType&& Range, _Pr&& _Pred)
 		}
 	}
 
-	const T Actual = FirstOrDefault(Range, _Pred);
+	const T Actual = Range | FirstOrDefault(_Pred);
 	TestEqual(What, Actual, Expected);
 }
 
