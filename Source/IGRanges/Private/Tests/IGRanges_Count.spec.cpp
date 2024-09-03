@@ -33,7 +33,6 @@ void FIGRangesCountSpec::Define()
 		};
 
 		const int32 ActualCount = SomeValues | std::views::transform(Square) | Count();
-
 		TestEqual("count", ActualCount, NumSomeValues);
 	});
 
@@ -51,8 +50,10 @@ void FIGRangesCountSpec::Define()
 			}
 		}
 
-		const int32 ActualCount = SomeValues | std::views::filter(IsEven) | Count();
+		int32 ActualCount = SomeValues | std::views::filter(IsEven) | Count();
+		TestEqual("count", ActualCount, ExpectedCount);
 
+		ActualCount = SomeValues | Count(IsEven);
 		TestEqual("count", ActualCount, ExpectedCount);
 	});
 }
