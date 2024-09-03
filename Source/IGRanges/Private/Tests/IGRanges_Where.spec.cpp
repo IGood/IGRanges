@@ -79,8 +79,6 @@ END_DEFINE_SPEC(FIGRangesWhereSpec)
 
 void FIGRangesWhereSpec::Define()
 {
-	using namespace IG::Ranges;
-
 	// `Where` accepts function pointers as a predicate.
 	It("function_pointer", [this]() {
 		TestCallable(&StaticIsEven);
