@@ -137,6 +137,7 @@ void FIGRangesFirstOrDefaultSpec::Define()
 	It("many_filtered (struct)", [this]() {
 		TestFilteredRange("default", SomeNumbers, AlwaysFalse);
 		TestFilteredRange("filter+first", SomeNumbers, &FMyNumber::bIsEven);
+		TestFilteredRange("filter+first", SomeNumbers, &FMyNumber::IsEven);
 	});
 
 	It("many_filtered (shared ptr)", [this, SomePointers]() {
