@@ -5,12 +5,32 @@
 #include "Templates/SharedPointer.h"
 #include <ranges>
 
+#define _IGRP IG::Ranges::Private::
+
 namespace IG::Ranges
 {
 namespace Private
 {
-struct NonNullRefToken
+struct NonNullRef_fn
 {
+	template <typename RangeType>
+	[[nodiscard]] constexpr auto operator()(RangeType&& Range) const
+	{
+		using T = std::ranges::range_value_t<RangeType>;
+
+		if constexpr (TIsTWeakPtr_V<T>) // Support for `TWeakPtr`
+		{
+			return std::forward<RangeType>(Range)
+				 | std::views::filter([](auto&& x) { return x.IsValid(); })
+				 | std::views::transform([](auto&& x) -> T::ElementType& { return *x.Pin().Get(); });
+		}
+		else
+		{
+			return std::forward<RangeType>(Range)
+				 | std::views::filter([](auto&& x) { return x != nullptr; })
+				 | std::views::transform([](auto&& x) -> decltype(*x)& { return *x; });
+		}
+	}
 };
 
 } // namespace Private
@@ -29,28 +49,11 @@ struct NonNullRefToken
 	});
 }
 
-[[nodiscard]] inline constexpr Private::NonNullRefToken NonNullRef()
+[[nodiscard]] inline constexpr auto NonNullRef()
 {
-	return {};
+	return std::ranges::_Range_closure<_IGRP NonNullRef_fn>{};
 }
 
 } // namespace IG::Ranges
 
-template <typename RangeType>
-[[nodiscard]] constexpr auto operator|(RangeType&& Range, IG::Ranges::Private::NonNullRefToken)
-{
-	using T = std::ranges::range_value_t<RangeType>;
-
-	if constexpr (TIsTWeakPtr_V<T>) // Support for `TWeakPtr`
-	{
-		return std::forward<RangeType>(Range)
-			 | std::views::filter([](auto&& x) { return x.IsValid(); })
-			 | std::views::transform([](auto&& x) -> T::ElementType& { return *x.Pin().Get(); });
-	}
-	else
-	{
-		return std::forward<RangeType>(Range)
-			 | std::views::filter([](auto&& x) { return x != nullptr; })
-			 | std::views::transform([](auto&& x) -> decltype(*x)& { return *x; });
-	}
-}
+#undef _IGRP
