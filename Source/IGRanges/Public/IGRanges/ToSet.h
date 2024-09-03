@@ -3,65 +3,47 @@
 #pragma once
 
 #include "Containers/Set.h"
+#include "IGRanges/Select.h"
 #include <ranges>
 
 namespace IG::Ranges
 {
 namespace Private
 {
-struct ToSetToken
+struct ToSet_fn
 {
-};
-
-template <typename RangeType>
-[[nodiscard]] auto MakeSet(const RangeType& Range)
-{
-	using T = std::ranges::range_value_t<RangeType>;
-	TSet<T> Set;
-
-	if constexpr (std::ranges::sized_range<RangeType>)
+	template <typename RangeType>
+	[[nodiscard]] constexpr auto operator()(RangeType&& Range) const
 	{
-		Set.Reserve(std::ranges::distance(Range));
-	}
+		using T = std::ranges::range_value_t<RangeType>;
+		TSet<T> Set;
 
-	return Set;
-}
+		if constexpr (std::ranges::sized_range<RangeType>)
+		{
+			Set.Reserve(std::ranges::distance(Range));
+		}
+
+		for (auto&& X : Range)
+		{
+			Set.Emplace(X);
+		}
+
+		return Set;
+	}
+};
 
 } // namespace Private
 
-template <typename RangeType>
-[[nodiscard]] auto ToSet(RangeType&& Range)
+[[nodiscard]] constexpr auto ToSet()
 {
-	auto Set = Private::MakeSet(Range);
-	for (auto&& X : Range)
-	{
-		Set.Emplace(X);
-	}
-
-	return Set;
+	return std::ranges::_Range_closure<IG::Ranges::Private::ToSet_fn>{};
 }
-
-template <typename RangeType, typename ProjectionType>
-[[nodiscard]] auto ToSet(RangeType&& Range, ProjectionType&& Proj)
+template <typename TransformT>
+[[nodiscard]] constexpr auto ToSet(TransformT&& Trans)
 {
-	auto Set = Private::MakeSet(Range);
-	for (auto&& X : Range)
-	{
-		Set.Emplace(std::invoke(Proj, X));
-	}
-
-	return Set;
-}
-
-[[nodiscard]] inline constexpr Private::ToSetToken ToSet()
-{
-	return {};
+	// Use `Select` to take advantage of overloads for "callable" or "member pointer".
+	return IG::Ranges::Select(std::forward<TransformT>(Trans))
+		 | std::ranges::_Range_closure<IG::Ranges::Private::ToSet_fn>{};
 }
 
 } // namespace IG::Ranges
-
-template <typename RangeType>
-[[nodiscard]] auto operator|(RangeType&& Range, IG::Ranges::Private::ToSetToken)
-{
-	return IG::Ranges::ToSet(std::forward<RangeType>(Range));
-}

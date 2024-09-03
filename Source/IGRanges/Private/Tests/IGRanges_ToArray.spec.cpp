@@ -8,7 +8,16 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-DEFINE_SPEC(FIGRangesToArraySpec, "IG.Ranges.ToArray", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter);
+BEGIN_DEFINE_SPEC(FIGRangesToArraySpec, "IG.Ranges.ToArray", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+
+void TestArray(const TArray<int32>& Actual, const TArray<int32>& Expected)
+{
+	TestEqual("count", Actual.Num(), Expected.Num());
+	TestEqual("capacity", Actual.Max(), Expected.Max());
+	TestEqual("contents", Actual, Expected);
+}
+
+END_DEFINE_SPEC(FIGRangesToArraySpec)
 
 void FIGRangesToArraySpec::Define()
 {
@@ -23,9 +32,7 @@ void FIGRangesToArraySpec::Define()
 	// `ToArray` with an empty range produces an array with zero count & capacity.
 	It("empty", [this]() {
 		const TArray<int32> TestMe = std::ranges::empty_view<int32>() | ToArray();
-
-		TestEqual("count", TestMe.Num(), 0);
-		TestEqual("capacity", TestMe.Max(), 0);
+		TestArray(TestMe, {});
 	});
 
 	// `ToArray` with a range whose size is known produces an array with equal count & capacity.
@@ -34,10 +41,7 @@ void FIGRangesToArraySpec::Define()
 		ExpectedArray.Append(SomeValues);
 
 		const TArray<int32> TestMe = SomeValues | ToArray();
-
-		TestEqual("count", TestMe.Num(), NumSomeValues);
-		TestEqual("capacity", TestMe.Max(), NumSomeValues);
-		TestEqual("contents", TestMe, ExpectedArray);
+		TestArray(TestMe, ExpectedArray);
 	});
 
 	// `ToArray` with a range whose size is known produces an array with equal count & capacity.
@@ -48,24 +52,19 @@ void FIGRangesToArraySpec::Define()
 		};
 
 		TArray<int32> ExpectedArray;
+		ExpectedArray.Reserve(NumSomeValues);
 		for (auto&& X : SomeValues)
 		{
 			ExpectedArray.Emplace(Square(X));
 		}
 
-		const auto TestArray = [&, this](const auto& A) {
-			TestEqual("count", A.Num(), NumSomeValues);
-			TestEqual("capacity", A.Max(), NumSomeValues);
-			TestEqual("contents", A, ExpectedArray);
-		};
-
 		// `ToArray` with 0 arguments (just creates an array from the view).
 		TArray<int32> TestMe = SomeValues | std::views::transform(Square) | ToArray();
-		TestArray(TestMe);
+		TestArray(TestMe, ExpectedArray);
 
-		// `ToArray` with 1 transformation argument (applies the transformation).
+		// `ToArray` with transformation argument (applies the transformation).
 		TestMe = SomeValues | ToArray(Square);
-		TestArray(TestMe);
+		TestArray(TestMe, ExpectedArray);
 	});
 
 	// `ToArray` with a range whose size is unknown produces an array with count & capacity consistent with traditional
@@ -85,10 +84,7 @@ void FIGRangesToArraySpec::Define()
 		}
 
 		const TArray<int32> TestMe = SomeValues | std::views::filter(IsEven) | ToArray();
-
-		TestEqual("count", TestMe.Num(), ExpectedArray.Num());
-		TestEqual("capacity", TestMe.Max(), ExpectedArray.Max());
-		TestEqual("contents", TestMe, ExpectedArray);
+		TestArray(TestMe, ExpectedArray);
 	});
 }
 

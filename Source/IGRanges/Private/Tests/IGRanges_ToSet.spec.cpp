@@ -8,7 +8,15 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-DEFINE_SPEC(FIGRangesToSetSpec, "IG.Ranges.ToSet", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter);
+BEGIN_DEFINE_SPEC(FIGRangesToSetSpec, "IG.Ranges.ToSet", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+
+void TestSet(const TSet<int32>& Actual, const TSet<int32>& Expected)
+{
+	TestEqual("count", Actual.Num(), Expected.Num());
+	TestTrue("equal sets", Actual.Difference(Expected).IsEmpty());
+};
+
+END_DEFINE_SPEC(FIGRangesToSetSpec)
 
 void FIGRangesToSetSpec::Define()
 {
@@ -20,8 +28,7 @@ void FIGRangesToSetSpec::Define()
 	// `ToSet` with an empty range produces a set with zero count.
 	It("empty", [this]() {
 		const TSet<int32> TestMe = std::ranges::empty_view<int32>() | ToSet();
-
-		TestEqual("count", TestMe.Num(), 0);
+		TestSet(TestMe, {});
 	});
 
 	// `ToSet` produces a set equal to traditional `TSet` usage.
@@ -34,9 +41,7 @@ void FIGRangesToSetSpec::Define()
 		}
 
 		const TSet<int32> TestMe = SomeValues | ToSet();
-
-		TestEqual("count", TestMe.Num(), ExpectedSet.Num());
-		TestTrue("equal sets", TestMe.Difference(ExpectedSet).IsEmpty());
+		TestSet(TestMe, ExpectedSet);
 	});
 
 	// `ToSet` produces a set equal to traditional `TSet` usage.
@@ -54,14 +59,10 @@ void FIGRangesToSetSpec::Define()
 		}
 
 		TSet<int32> TestMe = SomeValues | std::views::transform(Square) | ToSet();
+		TestSet(TestMe, ExpectedSet);
 
-		TestEqual("count", TestMe.Num(), ExpectedSet.Num());
-		TestTrue("equal sets", TestMe.Difference(ExpectedSet).IsEmpty());
-
-		TestMe = ToSet(SomeValues, Square);
-
-		TestEqual("count", TestMe.Num(), ExpectedSet.Num());
-		TestTrue("equal sets", TestMe.Difference(ExpectedSet).IsEmpty());
+		TestMe = SomeValues | ToSet(Square);
+		TestSet(TestMe, ExpectedSet);
 	});
 }
 

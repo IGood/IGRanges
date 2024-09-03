@@ -38,11 +38,11 @@ struct ToArray_fn
 {
 	return std::ranges::_Range_closure<IG::Ranges::Private::ToArray_fn>{};
 }
-template <class _Fn>
-[[nodiscard]] constexpr auto ToArray(_Fn&& _Fun)
+template <typename TransformT>
+[[nodiscard]] constexpr auto ToArray(TransformT&& Trans)
 {
 	// Use `Select` to take advantage of overloads for "callable" or "member pointer".
-	return IG::Ranges::Select(std::forward<_Fn>(_Fun))
+	return IG::Ranges::Select(std::forward<TransformT>(Trans))
 		 | std::ranges::_Range_closure<IG::Ranges::Private::ToArray_fn>{};
 }
 
