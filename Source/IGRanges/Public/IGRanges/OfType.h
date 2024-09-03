@@ -5,6 +5,8 @@
 #include "Templates/Casts.h"
 #include <ranges>
 
+#define _IGRP IG::Ranges::Private::
+
 namespace IG::Ranges
 {
 namespace Private
@@ -28,7 +30,7 @@ template <class T>
 
 [[nodiscard]] inline constexpr auto NonNullRef()
 {
-	return NonNull() | std::views::transform([](auto* x) -> decltype(*x)& { return *x; });
+	return _IGRP NonNull() | std::views::transform([](auto* x) -> decltype(*x)& { return *x; });
 }
 
 } // namespace Private
@@ -36,25 +38,27 @@ template <class T>
 template <class T>
 [[nodiscard]] constexpr auto OfType()
 {
-	return Private::Cast<T>() | Private::NonNull();
+	return _IGRP Cast<T>() | _IGRP NonNull();
 }
 
 template <class T>
 [[nodiscard]] constexpr auto OfTypeRef()
 {
-	return Private::Cast<T>() | Private::NonNullRef();
+	return _IGRP Cast<T>() | _IGRP NonNullRef();
 }
 
 template <class T>
 [[nodiscard]] constexpr auto OfTypeExact()
 {
-	return Private::CastExact<T>() | Private::NonNull();
+	return _IGRP CastExact<T>() | _IGRP NonNull();
 }
 
 template <class T>
 [[nodiscard]] constexpr auto OfTypeExactRef()
 {
-	return Private::CastExact<T>() | Private::NonNullRef();
+	return _IGRP CastExact<T>() | _IGRP NonNullRef();
 }
 
 } // namespace IG::Ranges
+
+#undef _IGRP

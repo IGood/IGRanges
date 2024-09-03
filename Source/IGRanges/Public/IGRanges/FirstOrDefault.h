@@ -3,8 +3,9 @@
 #pragma once
 
 #include "Templates/SharedPointer.h"
-#include <functional>
 #include <ranges>
+
+#define _IGRP IG::Ranges::Private::
 
 namespace IG::Ranges
 {
@@ -40,12 +41,14 @@ inline constexpr auto AlwaysTrue = [](auto&&) {
 template <class _Pr>
 [[nodiscard]] constexpr auto FirstOrDefault(_Pr&& _Pred)
 {
-	return std::ranges::_Range_closure<IG::Ranges::Private::FirstOrDefault_fn, std::decay_t<_Pr>>{std::forward<_Pr>(_Pred)};
+	return std::ranges::_Range_closure<_IGRP FirstOrDefault_fn, std::decay_t<_Pr>>{std::forward<_Pr>(_Pred)};
 }
 
 [[nodiscard]] constexpr auto FirstOrDefault()
 {
-	return FirstOrDefault(IG::Ranges::Private::AlwaysTrue);
+	return IG::Ranges::FirstOrDefault(_IGRP AlwaysTrue);
 }
 
 } // namespace IG::Ranges
+
+#undef _IGRP
