@@ -42,8 +42,7 @@ template <typename TransformT>
 [[nodiscard]] constexpr auto ToSet(TransformT&& Trans)
 {
 	// Use `Select` to take advantage of overloads for "callable" or "member pointer".
-	return IG::Ranges::Select(std::forward<TransformT>(Trans))
-		 | std::ranges::_Range_closure<IG::Ranges::Private::ToSet_fn>{};
+	return IG::Ranges::Select(std::forward<TransformT>(Trans)) | IG::Ranges::ToSet();
 }
 
 } // namespace IG::Ranges
