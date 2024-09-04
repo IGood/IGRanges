@@ -23,11 +23,9 @@ The following example "pipes" an array of integers through views to generate a s
 int myInts[] = { 0, 1, 2, 3, 4, 5 };
 auto even = [](int i) { return i % 2 == 0; };
 auto square = [](int i) { return i * i; };
- 
 // the "pipe" syntax of composing the views:
 for (int i : myInts | std::views::filter(even) | std::views::transform(square))
     std::cout << i << ' ';
-
 // Output: 0 4 16
 ```
 
@@ -37,18 +35,15 @@ If we were to rewrite it in a UE style with IGRanges, then it might look somethi
 #### 👩‍💻 Example A.2:
 ```cpp
 TArray<int32> MyInts = { 0, 1, 2, 3, 4, 5 };
-auto Even = [](int i) { return i % 2 == 0; };
+auto IsEven = [](int i) { return i % 2 == 0; };
 auto Square = [](int i) { return i * i; };
- 
 FString Result;
-for (int32 i : MyInts | Where(Even) | Select(Square))
+for (int32 i : MyInts | Where(IsEven) | Select(Square))
 {
     Result.AppendInt(i);
-    Result += TEXT(', ');
+    Result += TEXT(", ");
 }
-
 UE_LOG(LogTemp, Log, TEXT("Result{%s}"), *Result);
-
 // Output: Result{0, 4, 16,}
 ```
 
@@ -60,12 +55,11 @@ TArray<int32> MyInts = { 0, 1, 2, 3, 4, 5 };
 auto Sqevens = MyInts
     | Where([](int i) { return i % 2 == 0; })
     | Select([](int i) { return i * i; }); 
-
 FString Result;
 for (int32 i : Sqevens)
 {
     Result.AppendInt(i);
-    Result += TEXT(', ');
+    Result += TEXT(", ");
 }
 ```
 
