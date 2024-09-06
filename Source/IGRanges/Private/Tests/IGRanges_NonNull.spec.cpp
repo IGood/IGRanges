@@ -1,6 +1,5 @@
 ﻿// Copyright Ian Good
 
-#include "IGRanges/CPOs.h"
 #include "IGRanges/NonNull.h"
 #include "IGRangesInternal.h"
 #include "Misc/AutomationTest.h"

@@ -2,6 +2,12 @@
 
 #pragma once
 
+/**
+ * This file contains "customization points" required to allow Unreal containers to be used with C++20 Ranges.
+ *
+ * At least as of UE5.4 these are required. Future versions of the engine might make these obsolete.
+ */
+
 #include "Containers/Array.h"
 #include "Containers/ArrayView.h"
 

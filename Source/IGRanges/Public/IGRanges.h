@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "IGRanges/CPOs.h"
 #include "IGRanges/Count.h"
+#include "IGRanges/CustomizationPoints.h"
 #include "IGRanges/FirstOrDefault.h"
 #include "IGRanges/NonNull.h"
 #include "IGRanges/OfType.h"

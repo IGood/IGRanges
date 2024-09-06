@@ -1,6 +1,6 @@
 ﻿// Copyright Ian Good
 
-#include "IGRanges/CPOs.h"
+#include "IGRanges/CustomizationPoints.h"
 #include "IGRangesInternal.h"
 #include "Misc/AutomationTest.h"
 #include <ranges>
@@ -11,8 +11,8 @@ DEFINE_SPEC(FIGRangesCPOSpec, "IG.Ranges.CPO", EAutomationTestFlags::Application
 
 /**
  * This function pretty much just ensures that things compile when using UE containers with C++ Ranges.
- * If this fails to compile, that means there's probably some missing customization point objects (CPO's) for the
- * container.
+ * If this fails to compile, that means there's probably some missing customization points for the container (see
+ * `CustomizationPoints.h`).
  */
 static void CheckCompat(auto&& Container)
 {

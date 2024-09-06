@@ -1,6 +1,5 @@
 ﻿// Copyright Ian Good
 
-#include "IGRanges/CPOs.h"
 #include "IGRanges/FirstOrDefault.h"
 #include "IGRangesInternal.h"
 #include "Misc/AutomationTest.h"
@@ -99,7 +98,7 @@ void FIGRangesFirstOrDefaultSpec::Define()
 	const TSharedPtr<int32> B = MakeShared<int32>(2);
 	const TSharedPtr<int32> C = MakeShared<int32>(3);
 	const TSharedPtr<int32> D = MakeShared<int32>(4);
-	const TArray<TSharedPtr<int32>> SomePointers = {nullptr, A, B, C, D, nullptr, nullptr, D, A, D};
+	const TSharedPtr<int32> SomePointers[] = {nullptr, A, B, C, D, nullptr, nullptr, D, A, D};
 
 	It("empty (int32)", [this]() {
 		TestRange("default", std::ranges::empty_view<int32>());
