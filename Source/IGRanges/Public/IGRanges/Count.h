@@ -21,7 +21,7 @@ struct Count_fn
 
 } // namespace Private
 
-[[nodiscard]] constexpr auto Count()
+[[nodiscard]] inline constexpr auto Count()
 {
 	return std::ranges::_Range_closure<_IGRP Count_fn>{};
 }

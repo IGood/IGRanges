@@ -48,7 +48,7 @@ struct Sum_fn
 
 } // namespace Private
 
-[[nodiscard]] constexpr auto Sum()
+[[nodiscard]] inline constexpr auto Sum()
 {
 	return std::ranges::_Range_closure<_IGRP Sum_fn>{};
 }

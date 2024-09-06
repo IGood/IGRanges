@@ -35,7 +35,7 @@ struct ToArray_fn
 
 } // namespace Private
 
-[[nodiscard]] constexpr auto ToArray()
+[[nodiscard]] inline constexpr auto ToArray()
 {
 	return std::ranges::_Range_closure<_IGRP ToArray_fn>{};
 }

@@ -35,7 +35,7 @@ struct ToSet_fn
 
 } // namespace Private
 
-[[nodiscard]] constexpr auto ToSet()
+[[nodiscard]] inline constexpr auto ToSet()
 {
 	return std::ranges::_Range_closure<_IGRP ToSet_fn>{};
 }

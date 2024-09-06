@@ -44,7 +44,7 @@ template <class _Pr>
 	return std::ranges::_Range_closure<_IGRP FirstOrDefault_fn, std::decay_t<_Pr>>{std::forward<_Pr>(_Pred)};
 }
 
-[[nodiscard]] constexpr auto FirstOrDefault()
+[[nodiscard]] inline constexpr auto FirstOrDefault()
 {
 	return IG::Ranges::FirstOrDefault(_IGRP AlwaysTrue);
 }
