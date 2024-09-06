@@ -2,12 +2,14 @@
 
 #pragma once
 
+#include "IGRanges/Cast.h"
 #include "IGRanges/Count.h"
 #include "IGRanges/CustomizationPoints.h"
 #include "IGRanges/FirstOrDefault.h"
 #include "IGRanges/NonNull.h"
 #include "IGRanges/OfType.h"
 #include "IGRanges/Select.h"
+#include "IGRanges/Sum.h"
 #include "IGRanges/ToArray.h"
 #include "IGRanges/ToSet.h"
 #include "IGRanges/Where.h"
