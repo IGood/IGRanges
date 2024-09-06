@@ -156,9 +156,11 @@ TArray<UFoo*> Foos = SomeObjects | OfType<Foo>() | ToArray();
 - `Where`, `WhereNot`
 - `NonNull`, `NonNullRef`
 - `Select`
+- `Cast<T>`, `CastExact<T>`, `CastChecked<T>`
 - `OfType<T>`, `OfTypeRef<T>`, `OfTypeExact<T>`, `OfTypeExactRef<T>`
 - `FirstOrDefault`
 - `Count`
+- `Sum`
 - `ToArray`
 - `ToSet`
 
