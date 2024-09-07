@@ -74,6 +74,7 @@ void FIGRangesSumSpec::Define()
 			const FQuat SomeValues[] = {FQuat(1.0), FQuat(2.0), FQuat(3.0), FQuat(4.0), FQuat(5.0)};
 			const FQuat ExpectedSum = std::accumulate(SomeValues, SomeValues + UE_ARRAY_COUNT(SomeValues), FQuat(EForceInit::ForceInitToZero));
 			const FQuat ActualSum = SomeValues | Sum();
+			TestEqual("sum FQuat", ActualSum, ExpectedSum);
 		}
 		{
 			const FString SomeValues[] = {TEXT("1"), TEXT("2"), TEXT("3"), TEXT("4"), TEXT("5")};
