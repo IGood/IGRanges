@@ -18,15 +18,19 @@ void FIGRangesSumSpec::Define()
 	It("empty", [this]() {
 		{
 			const int32 ActualSum = std::ranges::empty_view<int32>() | Sum();
-			TestEqual("sum", ActualSum, 0);
+			TestEqual("sum int32", ActualSum, 0);
 		}
 		{
 			const FVector ActualSum = std::ranges::empty_view<FVector>() | Sum();
-			TestEqual("sum", ActualSum, FVector::ZeroVector);
+			TestEqual("sum FVector", ActualSum, FVector::ZeroVector);
+		}
+		{
+			const FQuat ActualSum = std::ranges::empty_view<FQuat>() | Sum();
+			TestEqual("sum FQuat", ActualSum, FQuat::Identity);
 		}
 		{
 			const FString ActualSum = std::ranges::empty_view<FString>() | Sum();
-			TestEqual("sum", ActualSum, FString{});
+			TestEqual("sum FString", ActualSum, FString{});
 		}
 	});
 
@@ -34,17 +38,22 @@ void FIGRangesSumSpec::Define()
 		{
 			const int32 Single[] = {123};
 			const int32 ActualSum = Single | Sum();
-			TestEqual("sum", ActualSum, Single[0]);
+			TestEqual("sum int32", ActualSum, Single[0]);
 		}
 		{
 			const FVector Single[] = {FVector(1, 2, 3)};
 			const FVector ActualSum = Single | Sum();
-			TestEqual("sum", ActualSum, Single[0]);
+			TestEqual("sum FVector", ActualSum, Single[0]);
+		}
+		{
+			const FQuat Single[] = {FQuat(1, 2, 3, 4)};
+			const FQuat ActualSum = Single | Sum();
+			TestEqual("sum FQuat", ActualSum, Single[0]);
 		}
 		{
 			const FString Single[] = {TEXT("123")};
 			const FString ActualSum = Single | Sum();
-			TestEqual("sum", ActualSum, Single[0]);
+			TestEqual("sum FString", ActualSum, Single[0]);
 		}
 	});
 
@@ -53,19 +62,24 @@ void FIGRangesSumSpec::Define()
 			const int32 SomeValues[] = {1, 2, 3, 4, 5};
 			const int32 ExpectedSum = std::accumulate(SomeValues, SomeValues + UE_ARRAY_COUNT(SomeValues), 0);
 			const int32 ActualSum = SomeValues | Sum();
-			TestEqual("sum", ActualSum, ExpectedSum);
+			TestEqual("sum int32", ActualSum, ExpectedSum);
 		}
 		{
-			const FVector SomeValues[] = {FVector{1}, FVector{2}, FVector{3}, FVector{4}, FVector{5}};
+			const FVector SomeValues[] = {FVector(1.0), FVector(2.0), FVector(3.0), FVector(4.0), FVector(5.0)};
 			const FVector ExpectedSum = std::accumulate(SomeValues, SomeValues + UE_ARRAY_COUNT(SomeValues), FVector::ZeroVector);
 			const FVector ActualSum = SomeValues | Sum();
-			TestEqual("sum", ActualSum, ExpectedSum);
+			TestEqual("sum FVector", ActualSum, ExpectedSum);
+		}
+		{
+			const FQuat SomeValues[] = {FQuat(1.0), FQuat(2.0), FQuat(3.0), FQuat(4.0), FQuat(5.0)};
+			const FQuat ExpectedSum = std::accumulate(SomeValues, SomeValues + UE_ARRAY_COUNT(SomeValues), FQuat(EForceInit::ForceInitToZero));
+			const FQuat ActualSum = SomeValues | Sum();
 		}
 		{
 			const FString SomeValues[] = {TEXT("1"), TEXT("2"), TEXT("3"), TEXT("4"), TEXT("5")};
 			const FString ExpectedSum = std::accumulate(SomeValues, SomeValues + UE_ARRAY_COUNT(SomeValues), FString{});
 			const FString ActualSum = SomeValues | Sum();
-			TestEqual("sum", ActualSum, ExpectedSum);
+			TestEqual("sum FString", ActualSum, ExpectedSum);
 		}
 	});
 
@@ -76,7 +90,7 @@ void FIGRangesSumSpec::Define()
 		};
 		const int32 ExpectedSum = std::accumulate(SomeValues, SomeValues + UE_ARRAY_COUNT(SomeValues), int32{}, AddLen);
 		const int32 ActualSum = SomeValues | Sum(&FString::Len);
-		TestEqual("sum", ActualSum, ExpectedSum);
+		TestEqual("sum int32", ActualSum, ExpectedSum);
 	});
 }
 

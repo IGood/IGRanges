@@ -2,10 +2,11 @@
 
 #pragma once
 
+#include "IGRanges/Impl/Common.h"
 #include "Templates/SharedPointer.h"
 #include <ranges>
 
-#define _IGRP IG::Ranges::Private::
+#include "IGRanges/Impl/Prologue.inl"
 
 namespace IG::Ranges
 {
@@ -14,7 +15,7 @@ namespace Private
 struct FirstOrDefault_fn
 {
 	template <typename RangeType, class _Pr>
-	[[nodiscard]] constexpr auto operator()(RangeType&& Range, _Pr&& _Pred) const
+	[[nodiscard]] constexpr auto operator()(RangeType&& Range, _Pr _Pred) const
 	{
 		using T = std::ranges::range_value_t<RangeType>;
 
@@ -28,7 +29,7 @@ struct FirstOrDefault_fn
 			}
 		}
 
-		return T{};
+		return _IGRP Construct<T>();
 	}
 };
 
@@ -46,9 +47,9 @@ template <class _Pr>
 
 [[nodiscard]] inline constexpr auto FirstOrDefault()
 {
-	return IG::Ranges::FirstOrDefault(_IGRP AlwaysTrue);
+	return _IGR FirstOrDefault(_IGRP AlwaysTrue);
 }
 
 } // namespace IG::Ranges
 
-#undef _IGRP
+#include "IGRanges/Impl/Epilogue.inl"

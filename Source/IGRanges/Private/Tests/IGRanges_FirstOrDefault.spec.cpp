@@ -1,6 +1,7 @@
 ﻿// Copyright Ian Good
 
 #include "IGRanges/FirstOrDefault.h"
+#include "IGRanges/Impl/Common.h"
 #include "IGRangesInternal.h"
 #include "Misc/AutomationTest.h"
 #include <ranges>
@@ -42,14 +43,12 @@ static constexpr auto AlwaysFalse = [](auto&&) {
 	return false;
 };
 
-template <typename RangeType>
-void TestRange(const FString& What, RangeType&& Range)
+template <typename RangeType, typename T>
+void TestRange(const FString& What, RangeType&& Range, T Default)
 {
 	using namespace IG::Ranges;
 
-	using T = std::ranges::range_value_t<RangeType>;
-
-	T Expected = T{};
+	T Expected = std::move(Default);
 	for (auto&& X : Range)
 	{
 		if (true) // add this to silence warning C4702: unreachable code
@@ -63,14 +62,12 @@ void TestRange(const FString& What, RangeType&& Range)
 	TestEqual(What, Actual, Expected);
 }
 
-template <typename RangeType, class _Pr>
-void TestFilteredRange(const FString& What, RangeType&& Range, _Pr&& _Pred)
+template <typename RangeType, class _Pr, typename T>
+void TestFilteredRange(const FString& What, RangeType&& Range, _Pr&& _Pred, T Default)
 {
 	using namespace IG::Ranges;
 
-	using T = std::ranges::range_value_t<RangeType>;
-
-	T Expected = T{};
+	T Expected = std::move(Default);
 	for (auto&& X : Range)
 	{
 		if (std::invoke(_Pred, X))
@@ -101,27 +98,31 @@ void FIGRangesFirstOrDefaultSpec::Define()
 	const TSharedPtr<int32> SomePointers[] = {nullptr, A, B, C, D, nullptr, nullptr, D, A, D};
 
 	It("empty (int32)", [this]() {
-		TestRange("default", std::ranges::empty_view<int32>());
+		TestRange("default", std::ranges::empty_view<int32>(), 0);
 	});
 
 	It("empty (struct)", [this]() {
-		TestRange("default", std::ranges::empty_view<FMyNumber>());
+		TestRange("default FMyNumber", std::ranges::empty_view<FMyNumber>(), FMyNumber{});
+		// Test that `FVector` returns "zero" instead of uninitialized.
+		TestRange("default FVector", std::ranges::empty_view<FVector>(), FVector::ZeroVector);
+		// Test that `FQuat` returns "identity" instead of uninitialized.
+		TestRange("default FQuat", std::ranges::empty_view<FQuat>(), FQuat::Identity);
 	});
 
 	It("empty (shared ptr)", [this]() {
-		TestRange("default", std::ranges::empty_view<TSharedPtr<int32>>());
+		TestRange("default", std::ranges::empty_view<TSharedPtr<int32>>(), TSharedPtr<int32>{});
 	});
 
 	It("many (int32)", [this]() {
-		TestRange("first", SomeValues);
+		TestRange("first", SomeValues, 0);
 	});
 
 	It("many (struct)", [this]() {
-		TestRange("first", SomeNumbers);
+		TestRange("first", SomeNumbers, FMyNumber{});
 	});
 
 	It("many (shared ptr)", [this, SomePointers]() {
-		TestRange("first", SomePointers);
+		TestRange("first", SomePointers, TSharedPtr<int32>{});
 	});
 
 	It("many_filtered (int32)", [this]() {
@@ -129,14 +130,14 @@ void FIGRangesFirstOrDefaultSpec::Define()
 			return x % 2 == 0;
 		};
 
-		TestFilteredRange("default", SomeValues, AlwaysFalse);
-		TestFilteredRange("filter+first", SomeValues, IsEven);
+		TestFilteredRange("default", SomeValues, AlwaysFalse, 0);
+		TestFilteredRange("filter+first", SomeValues, IsEven, 0);
 	});
 
 	It("many_filtered (struct)", [this]() {
-		TestFilteredRange("default", SomeNumbers, AlwaysFalse);
-		TestFilteredRange("filter+first", SomeNumbers, &FMyNumber::bIsEven);
-		TestFilteredRange("filter+first", SomeNumbers, &FMyNumber::IsEven);
+		TestFilteredRange("default", SomeNumbers, AlwaysFalse, FMyNumber{});
+		TestFilteredRange("filter+first", SomeNumbers, &FMyNumber::bIsEven, FMyNumber{});
+		TestFilteredRange("filter+first", SomeNumbers, &FMyNumber::IsEven, FMyNumber{});
 	});
 
 	It("many_filtered (shared ptr)", [this, SomePointers]() {
@@ -144,8 +145,8 @@ void FIGRangesFirstOrDefaultSpec::Define()
 			return x.IsValid() && (*x % 2 == 0);
 		};
 
-		TestFilteredRange("default", SomePointers, AlwaysFalse);
-		TestFilteredRange("filter+first", SomePointers, IsEven);
+		TestFilteredRange("default", SomePointers, AlwaysFalse, TSharedPtr<int32>{});
+		TestFilteredRange("filter+first", SomePointers, IsEven, TSharedPtr<int32>{});
 	});
 }
 

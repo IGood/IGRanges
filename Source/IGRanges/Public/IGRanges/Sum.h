@@ -2,10 +2,10 @@
 
 #pragma once
 
+#include "IGRanges/Impl/Common.h"
 #include <ranges>
-#include <type_traits>
 
-#define _IGRP IG::Ranges::Private::
+#include "IGRanges/Impl/Prologue.inl"
 
 namespace IG::Ranges
 {
@@ -24,15 +24,7 @@ struct Sum_fn
 		// If the range is empty, then return a default-initialized value.
 		if (It == End)
 		{
-			// For non-fundamental types (bool, int, etc.), use `EForceInit` because that seems desirable for things like `FVector`.
-			if constexpr (!std::is_fundamental_v<T> && std::is_constructible_v<T, EForceInit>)
-			{
-				return T(EForceInit::ForceInitToZero);
-			}
-			else
-			{
-				return T{};
-			}
+			return _IGRP Construct<T>();
 		}
 
 		T Result = *It;
@@ -57,9 +49,9 @@ template <typename TransformT>
 [[nodiscard]] constexpr auto Sum(TransformT&& Trans)
 {
 	return std::views::transform(std::forward<TransformT>(Trans))
-		 | IG::Ranges::Sum();
+		 | _IGR Sum();
 }
 
 } // namespace IG::Ranges
 
-#undef _IGRP
+#include "IGRanges/Impl/Epilogue.inl"
