@@ -6,6 +6,7 @@
 #include "Tests/Benchmark.h"
 #include "UObject/MetaData.h"
 #include "UObject/Package.h"
+#include <numeric>
 
 #if WITH_DEV_AUTOMATION_TESTS
 
@@ -126,6 +127,104 @@ void FIGRangesBenchmarksSpec::Define()
 
 		constexpr int32 NumRuns = 7;
 		UE_BENCHMARK(NumRuns, BaselineVersion);
+		UE_BENCHMARK(NumRuns, IGRangesVersion);
+	});
+
+	It("accumulate", [this]() {
+		const TArray<const UObject*> MyObjects = MakeObjectsArray();
+
+		const auto BaselineVersion = [&]() {
+			uint64 Result = 0;
+			for (const UObject* Elem : MyObjects)
+			{
+				Result += (Elem != nullptr) ? Elem->GetName().Len() : 0;
+			}
+
+			return Result;
+		};
+
+		const auto Fold = [](uint64 Acc, const UObject* Elem) {
+			return Acc + ((Elem != nullptr) ? Elem->GetName().Len() : 0);
+		};
+
+		const auto StdVersion = [&]() {
+			return std::accumulate(MyObjects.begin(), MyObjects.end(), uint64{}, Fold);
+		};
+
+		const auto IGRangesVersion = [&]() {
+			return MyObjects | Accumulate(uint64{}, Fold);
+		};
+
+		// Sanity check that these versions produce the same results.
+		{
+			const int32 Expected = BaselineVersion();
+			const int32 StdActual = StdVersion();
+			const int32 IgrActual = IGRangesVersion();
+			const bool bSuccess =
+				TestEqual("std version results", StdActual, Expected)
+				&& TestEqual("igr version results", IgrActual, Expected);
+			if (!bSuccess)
+			{
+				return;
+			}
+
+			UE_LOG(LogIGRangesTests, Log, TEXT("%d elements were accumulated."), MyObjects.Num());
+		}
+
+		constexpr int32 NumRuns = 7;
+		UE_BENCHMARK(NumRuns, BaselineVersion);
+		UE_BENCHMARK(NumRuns, StdVersion);
+		UE_BENCHMARK(NumRuns, IGRangesVersion);
+	});
+
+	It("sum", [this]() {
+		const TArray<const UObject*> MyObjects = MakeObjectsArray();
+
+		const auto BaselineVersion = [&]() {
+			int32 Result = 0;
+			for (const UObject* Elem : MyObjects)
+			{
+				Result += (Elem != nullptr) ? Elem->GetName().Len() : 0;
+			}
+
+			return Result;
+		};
+
+		const auto Fold = [](int32 Acc, const UObject* Elem) {
+			return Acc + ((Elem != nullptr) ? Elem->GetName().Len() : 0);
+		};
+
+		const auto StdVersion = [&]() {
+			return std::accumulate(MyObjects.begin(), MyObjects.end(), int32{}, Fold);
+		};
+
+		const auto SumSelector = [](const UObject* Elem) {
+			return (Elem != nullptr) ? Elem->GetName().Len() : 0;
+		};
+
+		const auto IGRangesVersion = [&]() {
+			return MyObjects | Sum(SumSelector);
+		};
+
+		// Sanity check that these versions produce the same results.
+		{
+			const int32 Expected = BaselineVersion();
+			const int32 StdActual = StdVersion();
+			const int32 IgrActual = IGRangesVersion();
+			const bool bSuccess =
+				TestEqual("std version results", StdActual, Expected)
+				&& TestEqual("igr version results", IgrActual, Expected);
+			if (!bSuccess)
+			{
+				return;
+			}
+
+			UE_LOG(LogIGRangesTests, Log, TEXT("%d elements were summed."), MyObjects.Num());
+		}
+
+		constexpr int32 NumRuns = 7;
+		UE_BENCHMARK(NumRuns, BaselineVersion);
+		UE_BENCHMARK(NumRuns, StdVersion);
 		UE_BENCHMARK(NumRuns, IGRangesVersion);
 	});
 }
