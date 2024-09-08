@@ -4,7 +4,7 @@
 
 #include <ranges>
 
-#define _IGRP IG::Ranges::Private::
+#include "IGRanges/Impl/Prologue.inl"
 
 namespace IG::Ranges
 {
@@ -30,9 +30,9 @@ template <class _Pr>
 [[nodiscard]] constexpr auto Count(_Pr&& _Pred)
 {
 	return std::views::filter(std::forward<_Pr>(_Pred))
-		 | IG::Ranges::Count();
+		 | _IGR Count();
 }
 
 } // namespace IG::Ranges
 
-#undef _IGRP
+#include "IGRanges/Impl/Epilogue.inl"

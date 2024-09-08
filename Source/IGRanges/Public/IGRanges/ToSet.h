@@ -5,7 +5,7 @@
 #include "Containers/Set.h"
 #include <ranges>
 
-#define _IGRP IG::Ranges::Private::
+#include "IGRanges/Impl/Prologue.inl"
 
 namespace IG::Ranges
 {
@@ -49,4 +49,4 @@ template <typename TransformT>
 
 } // namespace IG::Ranges
 
-#undef _IGRP
+#include "IGRanges/Impl/Epilogue.inl"

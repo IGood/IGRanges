@@ -5,8 +5,7 @@
 #include "IGRanges/Cast.h"
 #include <ranges>
 
-#define _IGR IG::Ranges::
-#define _IGRP IG::Ranges::Private::
+#include "IGRanges/Impl/Prologue.inl"
 
 namespace IG::Ranges
 {
@@ -50,5 +49,4 @@ template <class T>
 
 } // namespace IG::Ranges
 
-#undef _IGR
-#undef _IGRP
+#include "IGRanges/Impl/Epilogue.inl"

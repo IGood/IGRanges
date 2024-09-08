@@ -5,7 +5,7 @@
 #include "Templates/SharedPointer.h"
 #include <ranges>
 
-#define _IGRP IG::Ranges::Private::
+#include "IGRanges/Impl/Prologue.inl"
 
 namespace IG::Ranges
 {
@@ -56,4 +56,4 @@ struct NonNullRef_fn
 
 } // namespace IG::Ranges
 
-#undef _IGRP
+#include "IGRanges/Impl/Epilogue.inl"

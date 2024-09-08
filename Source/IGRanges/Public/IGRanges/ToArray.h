@@ -5,7 +5,7 @@
 #include "Containers/Array.h"
 #include <ranges>
 
-#define _IGRP IG::Ranges::Private::
+#include "IGRanges/Impl/Prologue.inl"
 
 namespace IG::Ranges
 {
@@ -44,9 +44,9 @@ template <typename TransformT>
 [[nodiscard]] constexpr auto ToArray(TransformT&& Trans)
 {
 	return std::views::transform(std::forward<TransformT>(Trans))
-		 | IG::Ranges::ToArray();
+		 | _IGR ToArray();
 }
 
 } // namespace IG::Ranges
 
-#undef _IGRP
+#include "IGRanges/Impl/Epilogue.inl"
