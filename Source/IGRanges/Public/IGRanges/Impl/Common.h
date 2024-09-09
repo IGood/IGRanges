@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "Misc/CoreMiscDefines.h"
+#include "HAL/Platform.h" // required before `CoreMiscDefines.h`
+#include "Misc/CoreMiscDefines.h" // `EForceInit`
 #include <type_traits>
 
 namespace IG::Ranges::Private

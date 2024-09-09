@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "HAL/Platform.h" // `int32`
 #include <ranges>
 
 #include "IGRanges/Impl/Prologue.inl"
