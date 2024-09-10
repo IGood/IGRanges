@@ -3,6 +3,8 @@
 #pragma once
 
 #include "IGRanges/Cast.h"
+#include "UObject/SoftObjectPtr.h"
+#include "UObject/WeakObjectPtrTemplates.h"
 #include <ranges>
 
 #include "IGRanges/Impl/Prologue.inl"
@@ -25,8 +27,13 @@ template <typename T>
 template <typename T>
 [[nodiscard]] bool IsA(const TWeakObjectPtr<T>& WeakObj, const UClass* Class)
 {
-	const UObject* Obj = WeakObj.Get();
-	return Obj != nullptr && Obj->IsA(Class);
+	return _IGRP IsA(WeakObj.Get(), Class);
+}
+
+template <typename T>
+[[nodiscard]] bool IsA(const TSoftObjectPtr<T>& SoftObj, const UClass* Class)
+{
+	return _IGRP IsA(SoftObj.Get(), Class);
 }
 
 [[nodiscard]] inline constexpr auto Dereference()
