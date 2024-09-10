@@ -61,7 +61,7 @@ bool TestCallableImpl(PredicateT&& Predicate, WhereFilterT&& WhereFilter)
 		}
 	}
 
-	int i = -1;
+	int32 i = -1;
 	for (auto&& X : SomeNumbers | WhereFilter)
 	{
 		++i;
@@ -124,6 +124,42 @@ void FIGRangesWhereSpec::Define()
 	// `WhereNot` accepts member function pointers as a predicate.
 	It("member_function_pointer (not)", [this]() {
 		TestCallableNot(&FMyNumber::IsEven);
+	});
+
+	// `WhereSafe` expects pointer-like elements & performs a null-check before the invoking the predicate.
+	It("pointer safe", [this]() {
+		using namespace IG::Ranges;
+
+		int32 A = 1;
+		int32 B = 2;
+		int32 C = 3;
+		int32 D = 4;
+		int32* SomePointers[] = {nullptr, &A, &B, &C, &D, nullptr, nullptr, &D, &A, &D};
+
+		const auto IsEven = [](const int32* x) {
+			return *x % 2 == 0;
+		};
+
+		TArray<const int32*> ExpectedValues;
+		for (const int32* X : SomePointers)
+		{
+			if (X != nullptr && IsEven(X))
+			{
+				ExpectedValues.Emplace(X);
+			}
+		}
+
+		int32 i = -1;
+		for (const int32* X : SomePointers | SafeWhere(IsEven))
+		{
+			++i;
+			UTEST_TRUE_EXPR(ExpectedValues.IsValidIndex(i));
+			UTEST_EQUAL("filtered element", X, ExpectedValues[i]);
+		}
+
+		UTEST_EQUAL("count", i + 1, ExpectedValues.Num());
+
+		return true;
 	});
 }
 

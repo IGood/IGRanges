@@ -18,7 +18,7 @@ template <class _Fn>
 template <class _Fn>
 [[nodiscard]] constexpr auto SelectNonNull(_Fn&& _Fun)
 {
-	return _IGR Select(std::forward<_Fn>(_Fun)) | _IGR NonNull();
+	return std::views::transform(std::forward<_Fn>(_Fun)) | _IGR NonNull();
 }
 
 } // namespace IG::Ranges
