@@ -126,7 +126,7 @@ void FIGRangesWhereSpec::Define()
 		TestCallableNot(&FMyNumber::IsEven);
 	});
 
-	// `WhereSafe` expects pointer-like elements & performs a null-check before the invoking the predicate.
+	// `SafeWhere` expects pointer-like elements & performs a null-check before the invoking the predicate.
 	It("pointer safe", [this]() {
 		using namespace IG::Ranges;
 
