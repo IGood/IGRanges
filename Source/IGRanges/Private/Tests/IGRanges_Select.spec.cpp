@@ -52,7 +52,7 @@ bool TestCallable(TransformT&& Transform)
 		ExpectedValues.Emplace(std::invoke(Transform, X));
 	}
 
-	int i = -1;
+	int32 i = -1;
 	for (auto&& X : SomeNumbers | Select(Transform))
 	{
 		++i;
