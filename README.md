@@ -153,9 +153,9 @@ TArray<UFoo*> Foos = SomeObjects | OfType<Foo>() | ToArray();
 
 ### ✨ Features
 
-- `Where`, `WhereNot`
+- `Where`, `WhereNot`, `SafeWhere`, `SafeWhereNot`
 - `NonNull`, `NonNullRef`
-- `Select`
+- `Select`, `SelectNonNull`
 - `Cast<T>`, `CastExact<T>`, `CastChecked<T>`, `CastCheckedRef<T>`
 - `OfType<T>`, `OfTypeRef<T>`, `OfTypeExact<T>`, `OfTypeExactRef<T>`, `OfType`, `OfTypeRef`
 - `FirstOrDefault`
