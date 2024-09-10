@@ -35,6 +35,8 @@ bool TestPointersOfType(const RangeType& Range)
 		UTEST_EQUAL("casted element", X, ExpectedPointers[i]);
 	}
 
+	UTEST_EQUAL("count", i + 1, ExpectedPointers.Num());
+
 	return true;
 }
 
@@ -82,6 +84,8 @@ bool TestRefsOfType(const RangeType& Range)
 		UTEST_SAME("casted element", X, *ExpectedPointers[i]);
 	}
 
+	UTEST_EQUAL("count", i + 1, ExpectedPointers.Num());
+
 	return true;
 }
 
@@ -124,6 +128,8 @@ bool TestPointersIsA(const RangeType& Range, const UClass* Class)
 		UTEST_TRUE_EXPR(ExpectedPointers.IsValidIndex(i));
 		UTEST_SAME("element", *X, *ExpectedPointers[i]);
 	}
+
+	UTEST_EQUAL("count", i + 1, ExpectedPointers.Num());
 
 	return true;
 }
