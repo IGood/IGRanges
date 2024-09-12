@@ -43,12 +43,7 @@ template <typename T>
 
 [[nodiscard]] inline constexpr auto NonNull()
 {
-	return std::views::filter([](auto* x) { return x != nullptr; });
-}
-
-[[nodiscard]] inline constexpr auto NonNullRef()
-{
-	return _IGRP NonNull() | _IGRP Dereference();
+	return std::views::filter([](const void* x) { return x != nullptr; });
 }
 
 } // namespace Private
@@ -62,7 +57,7 @@ template <class T>
 template <class T>
 [[nodiscard]] constexpr auto OfTypeRef()
 {
-	return _IGR Cast<T>() | _IGRP NonNullRef();
+	return _IGR Cast<T>() | _IGRP NonNull() | _IGRP Dereference();
 }
 
 template <class T>
@@ -74,7 +69,7 @@ template <class T>
 template <class T>
 [[nodiscard]] constexpr auto OfTypeExactRef()
 {
-	return _IGR CastExact<T>() | _IGRP NonNullRef();
+	return _IGR CastExact<T>() | _IGRP NonNull() | _IGRP Dereference();
 }
 
 [[nodiscard]] inline constexpr auto OfType(const UClass* Class)

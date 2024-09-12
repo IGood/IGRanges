@@ -1,6 +1,8 @@
 ﻿// Copyright Ian Good
 
 #include "IGRanges.h"
+#include "IGRanges/Filters/IsChildOf.h"
+#include "IGRanges/Selectors/CDO.h"
 #include "IGRangesInternal.h"
 #include "Misc/AutomationTest.h"
 #include "Tests/Benchmark.h"
@@ -37,7 +39,8 @@ static TArray<const UObject*> MakeObjectsArray()
 		nullptr,
 	};
 
-	constexpr int32 NumCopies = 500'000;
+	// constexpr int32 NumCopies = 500'000;
+	constexpr int32 NumCopies = 1;
 
 	TArray<const UObject*> SomeObjectsManyTimes;
 	SomeObjectsManyTimes.Reserve(UE_ARRAY_COUNT(SomeObjects) * NumCopies);
@@ -227,6 +230,59 @@ void FIGRangesBenchmarksSpec::Define()
 		UE_BENCHMARK(NumRuns, StdVersion);
 		UE_BENCHMARK(NumRuns, IGRangesVersion);
 	});
+
+	//*
+	It("cdos", [this]() {
+		const TArray<const UObject*> MyObjects = MakeObjectsArray();
+		auto cdos =
+			MyObjects
+			| NonNull()
+			| Select(&UObject::GetClass)
+			| Where(Filters::IsChildOf<UMetaData>())
+			| ToSet(Selectors::CDO);
+		AddInfo(FString::Printf(TEXT("%d cods 👏🍎🍏🈸"), cdos.Num()));
+
+		cdos =
+			MyObjects
+			| NonNull()
+			| Select(&UObject::GetClass)
+			| Where(Filters::IsChildOf(UMetaData::StaticClass()))
+			| ToSet(Selectors::CDO);
+		AddInfo(FString::Printf(TEXT("%d cods 🍎🍏🈸"), cdos.Num()));
+
+		cdos =
+			MyObjects
+			| NonNull()
+			| Select(&UObject::GetClass)
+			| Where(Filters::IsChildOf(TSubclassOf<UMetaData>(UMetaData::StaticClass())))
+			| ToSet(Selectors::CDO);
+		AddInfo(FString::Printf(TEXT("%d cods 🍏🈸"), cdos.Num()));
+
+		cdos =
+			MyObjects
+			| NonNull()
+			| Select(&UObject::GetClass)
+			| Where(Filters::IsChildOf(TObjectPtr<UClass>(UMetaData::StaticClass())))
+			| ToSet(Selectors::CDO);
+		AddInfo(FString::Printf(TEXT("%d cods 🈸"), cdos.Num()));
+
+		cdos =
+			MyObjects
+			| NonNull()
+			| Select(&UObject::GetClass)
+			| Where(Filters::IsChildOf(TWeakObjectPtr<UClass>(UMetaData::StaticClass())))
+			| ToSet(Selectors::CDO);
+		AddInfo(FString::Printf(TEXT("%d cods "), cdos.Num()));
+
+		cdos =
+			MyObjects
+			| NonNull()
+			| Select(&UObject::GetClass)
+			| Where(Filters::IsChildOf(TSoftClassPtr<UMetaData>(UMetaData::StaticClass())))
+			| ToSet(Selectors::CDO);
+		AddInfo(FString::Printf(TEXT("%d cods x"), cdos.Num()));
+	});
+	//*/
 }
 
 #endif // WITH_DEV_AUTOMATION_TESTS
