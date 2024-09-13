@@ -20,53 +20,60 @@ concept HasGetDefaultObject = requires(T t) {
 };
 
 template <typename T>
-concept IsSoftPtr = requires(T t) {
-	t.LoadSynchronous();
-};
-
-/**
- * Gets the input UClass-like value as a `UClass*`.
- * This function is expected to be used with types like...
- * - UClass*
- * - TObjectPtr<UClass>
- * - TWeakObjectPtr<UClass>
- * - TSubclassOf<T>
- * - TSoftClassPtr<T>
- * All of the smart pointer types have a `Get` method that we want to use to get the underlying value.
- */
-template <typename ClassType>
-[[nodiscard]] const UClass* GetClassPointer(ClassType&& ClassLike)
-{
-	if constexpr (_IGRP HasGet<ClassType>)
-	{
-		return ClassLike.Get();
-	}
-	else
-	{
-		return ClassLike;
-	}
-}
+concept IsSoftPtr =
+	_IGRP HasGet<T>
+	&& requires {
+		   typename T::ElementType;
+	   } //
+	&& requires(T t) {
+		   t.LoadSynchronous();
+	   };
 
 } // namespace Private
 
 namespace Selectors
 {
+/**
+ * Selector that yields the "class default object" / "constructed default object" (CDO) from UClass-like values.
+ * Safe to use with null inputs.
+ * May yield null.
+ *
+ * This selector is expected to be used with types like...
+ * - UClass*
+ * - TObjectPtr<UClass>
+ * - TWeakObjectPtr<UClass>
+ * - TSubclassOf<T>
+ * - TSoftClassPtr<T>
+ *
+ * @usage SomeClasses | Select(Selectors::CDO)
+ */
 inline constexpr auto CDO = []<typename ClassType>(ClassType&& ClassLike) {
+	// Remove reference to go from things like (A) to (B) so we can do things with (C):
+	// (A) const TSoftClassPtr<T>&
+	// (B) const TSoftClassPtr<T>
+	// (C) ValueClassType::ElementType
+	using ValueClassType = std::remove_reference_t<ClassType>;
+
+	// `TSubclassOf<UFoo>::GetDefaultObject` knows the class type & does the null-checks & casting for us.
 	if constexpr (_IGRP HasGetDefaultObject<ClassType>)
 	{
-		// `TSubclassOf<UFoo>::GetDefaultObject` knows the class type & does the null-checks & casting for us.
 		return ClassLike.GetDefaultObject();
 	}
-	else if constexpr (_IGRP IsSoftPtr<ClassType>)
+	// `TSoftClassPtr<UFoo>` knows the class type, but we need to perform the cast (returns `UFoo*`).
+	else if constexpr (_IGRP IsSoftPtr<ValueClassType>)
 	{
-		// A `TSoftClassPtr<UFoo>` knows the class type, but we need to perform the cast (returns `UFoo*`).
 		const UClass* Class = ClassLike.Get();
-		return (Class != nullptr) ? static_cast<ClassType::ElementType*>(Class->GetDefaultObject()) : nullptr;
+		return (Class != nullptr) ? static_cast<ValueClassType::ElementType*>(Class->GetDefaultObject()) : nullptr;
+	}
+	// Other UClass-like types don't know the class type, so we cannot cast (just returns `UObject*`).
+	else if constexpr (_IGRP HasGet<ClassType>)
+	{
+		const UClass* Class = ClassLike.Get();
+		return (Class != nullptr) ? Class->GetDefaultObject() : nullptr;
 	}
 	else
 	{
-		// Other UClass-like types don't know the class type, so we cannot cast (just returns `UObject*`).
-		const UClass* Class = _IGRP GetClassPointer(ClassLike);
+		const UClass* Class = ClassLike;
 		return (Class != nullptr) ? Class->GetDefaultObject() : nullptr;
 	}
 };

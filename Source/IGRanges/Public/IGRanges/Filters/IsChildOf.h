@@ -25,15 +25,15 @@ namespace Private
  * All of the smart pointer types have a `Get` method that we want to use to get the underlying value.
  */
 template <typename ClassType>
-[[nodiscard]] const UStruct* GetStructPointer(ClassType&& Class)
+[[nodiscard]] const UStruct* AsStructPointer(ClassType&& ClassLike)
 {
 	if constexpr (_IGRP HasGet<ClassType>)
 	{
-		return Class.Get();
+		return ClassLike.Get();
 	}
 	else
 	{
-		return Class;
+		return ClassLike;
 	}
 }
 
@@ -41,15 +41,41 @@ template <typename ClassType>
 
 namespace Filters
 {
+/**
+ * Filter that tests whether a UClass-like value is a child of the specified class.
+ * Safe to use with null inputs.
+ *
+ * This filter is expected to be used with types like...
+ * - UClass*
+ * - TObjectPtr<UClass>
+ * - TWeakObjectPtr<UClass>
+ * - TSubclassOf<T>
+ * - TSoftClassPtr<T>
+ *
+ * @usage SomeClasses | Where(Filters::IsChildOf(FooClass))
+ */
 template <typename ClassType>
-[[nodiscard]] auto IsChildOf(ClassType Class)
+[[nodiscard]] auto IsChildOf(ClassType&& ClassLike)
 {
-	return [SomeBase = _IGRP GetStructPointer(Class)](auto&& x) {
-		const UStruct* Struct = _IGRP GetStructPointer(x);
+	return [SomeBase = _IGRP AsStructPointer(ClassLike)](auto&& x) {
+		const UStruct* Struct = _IGRP AsStructPointer(x);
 		return Struct != nullptr && Struct->IsChildOf(SomeBase);
 	};
 }
 
+/**
+ * Filter that tests whether a UClass-like value is a child of the specified class.
+ * Safe to use with null inputs.
+ *
+ * This filter is expected to be used with types like...
+ * - UClass*
+ * - TObjectPtr<UClass>
+ * - TWeakObjectPtr<UClass>
+ * - TSubclassOf<T>
+ * - TSoftClassPtr<T>
+ *
+ * @usage SomeClasses | Where(Filters::IsChildOf<UFoo>())
+ */
 template <typename T>
 [[nodiscard]] auto IsChildOf()
 {
