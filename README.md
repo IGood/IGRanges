@@ -164,6 +164,8 @@ TArray<UFoo*> Foos = SomeObjects | OfType<Foo>() | ToArray();
 - `Accumulate`
 - `ToArray`
 - `ToSet`
+- `Selectors::CDO`
+- `Filters::IsChildOf<T>`, `Filters::IsChildOf`
 
 ----
 
