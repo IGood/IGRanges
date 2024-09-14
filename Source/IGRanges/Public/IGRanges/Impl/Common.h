@@ -2,12 +2,17 @@
 
 #pragma once
 
-#include "HAL/Platform.h" // required before `CoreMiscDefines.h`
+#include "HAL/Platform.h"         // required before `CoreMiscDefines.h`
 #include "Misc/CoreMiscDefines.h" // `EForceInit`
 #include <type_traits>
 
 namespace IG::Ranges::Private
 {
+template <typename T>
+concept HasGet = requires(T t) {
+	t.Get();
+};
+
 template <typename T>
 [[nodiscard]] T Construct()
 {
