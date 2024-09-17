@@ -33,21 +33,12 @@ struct FirstOrDefault_fn
 	}
 };
 
-inline constexpr auto AlwaysTrue = [](auto&&) {
-	return true;
-};
-
 } // namespace Private
 
-template <class _Pr>
-[[nodiscard]] constexpr auto FirstOrDefault(_Pr&& _Pred)
+template <class _Pr = _IGRP AlwaysTrue>
+[[nodiscard]] constexpr auto FirstOrDefault(_Pr&& _Pred = {})
 {
 	return std::ranges::_Range_closure<_IGRP FirstOrDefault_fn, std::decay_t<_Pr>>{std::forward<_Pr>(_Pred)};
-}
-
-[[nodiscard]] inline constexpr auto FirstOrDefault()
-{
-	return _IGR FirstOrDefault(_IGRP AlwaysTrue);
 }
 
 } // namespace IG::Ranges

@@ -13,6 +13,17 @@ concept HasGet = requires(T t) {
 	t.Get();
 };
 
+struct AlwaysTrue
+{
+	template <typename T>
+	[[nodiscard]] constexpr bool operator()(T&&) const noexcept
+	{
+		return true;
+	}
+
+	using is_transparent = int;
+};
+
 template <typename T>
 [[nodiscard]] T Construct()
 {
