@@ -30,7 +30,6 @@ struct Count_fn
  */
 [[nodiscard]] inline constexpr auto Count()
 {
-
 	return std::ranges::_Range_closure<_IGRP Count_fn>{};
 }
 
