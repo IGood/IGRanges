@@ -22,11 +22,25 @@ struct Count_fn
 
 } // namespace Private
 
+/**
+ * Returns the number of elements in a range.
+ *
+ * @usage
+ * int32 NumVulerableActors = SomeActors | Where(&AActor::CanBeDamaged) | Count();
+ */
 [[nodiscard]] inline constexpr auto Count()
 {
+
 	return std::ranges::_Range_closure<_IGRP Count_fn>{};
 }
 
+/**
+ * Returns the number of elements in a range that satisfy a predicate.
+ * Equivalent to `Where(pred) | Count()`.
+ *
+ * @usage
+ * int32 NumVulerableActors = SomeActors | Count(&AActor::CanBeDamaged);
+ */
 template <class _Pr>
 [[nodiscard]] constexpr auto Count(_Pr&& _Pred)
 {

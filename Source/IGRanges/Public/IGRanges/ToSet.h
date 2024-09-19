@@ -35,11 +35,24 @@ struct ToSet_fn
 
 } // namespace Private
 
+/**
+ * Creates a `TSet` from a range.
+ *
+ * @usage
+ * TSet<int32> UniqueNumbers = SomeNumbers | ToSet();
+ */
 [[nodiscard]] inline constexpr auto ToSet()
 {
 	return std::ranges::_Range_closure<_IGRP ToSet_fn>{};
 }
 
+/**
+ * Same as `ToSet` (no parameters) but first applies a projection to elements.
+ * Equivalent to `Select(proj) | ToSet()`.
+ *
+ * @usage
+ * TSet<USkeletalMesh*> UniqueMeshes = MySkMeshComponents | ToSet(&USkeletalMeshComponent::GetSkeletalMeshAsset);
+ */
 template <typename TransformT>
 [[nodiscard]] constexpr auto ToSet(TransformT&& Trans)
 {

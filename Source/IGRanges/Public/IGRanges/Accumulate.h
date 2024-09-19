@@ -22,6 +22,22 @@ struct Accumulate_fn
 
 } // namespace Private
 
+/**
+ * Applies an accumulator function over a range.
+ * The specified seed value is used as the initial accumulator value.
+ *
+ * Alias for `std::accumulate`:
+ * Initializes an accumulator value with the seed value and then modifies it with `Fold(acc, *i)` for every element in
+ * the range.
+ *
+ * @usage
+ * FString Results =
+ *     SomeObjects
+ *     | Accumulate(FString(TEXT("Objects:")), [](FString Acc, const UObject* Obj) {
+ *           return Acc + GetNameSafe(Obj) + TEXT(',');
+ *       });
+ * // example Results = "Objects:Foo,Bar,None,Blah,"
+ */
 template <typename T, typename FoldType>
 [[nodiscard]] constexpr auto Accumulate(T&& Seed, FoldType&& Fold)
 {

@@ -40,11 +40,28 @@ struct Sum_fn
 
 } // namespace Private
 
+/**
+ * Computes the sum of a sequence of values by applying `operator+`.
+ * Empty ranges return a default-initialized value.
+ *
+ * @usage
+ * int32 Total = SomeNumbers | Sum();
+ * FVector Offset = SomeVectors | Sum();
+ * FString Concatenated = SomeStrings | Sum();
+ */
 [[nodiscard]] inline constexpr auto Sum()
 {
 	return std::ranges::_Range_closure<_IGRP Sum_fn>{};
 }
 
+/**
+ * Same as `Sum` (no parameters) but first applies a projection to elements.
+ * Equivalent to `Select(proj) | Sum()`.
+ *
+ * @usage
+ * float TotalWeight = SomeStructs | Sum([](const FBar& B) { return B.Weight; });
+ * float TotalWeight = SomeStructs | Sum(&FBar::Weight);
+ */
 template <typename TransformT>
 [[nodiscard]] constexpr auto Sum(TransformT&& Trans)
 {

@@ -35,6 +35,11 @@ struct NonNullRef_fn
 
 } // namespace Private
 
+/**
+ * Filters a sequence of pointer-like values, removing null elements.
+ * Works on raw pointers (e.g. `UFoo*`) and smart pointers (e.g. `TObjectPtr<UFoo>`, `TWeakPointer<FBar>`, etc.) and
+ * anything that can be null-checked.
+ */
 [[nodiscard]] inline constexpr auto NonNull()
 {
 	return std::views::filter([]<typename T>(T&& x) {
@@ -49,6 +54,9 @@ struct NonNullRef_fn
 	});
 }
 
+/**
+ * Same as `NonNull` but yields references to values instead of pointers.
+ */
 [[nodiscard]] inline constexpr auto NonNullRef()
 {
 	return std::ranges::_Range_closure<_IGRP NonNullRef_fn>{};

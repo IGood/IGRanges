@@ -35,6 +35,16 @@ struct FirstOrDefault_fn
 
 } // namespace Private
 
+/**
+ * Returns the first element of a sequence, or a default-initialized value if the sequence contains no elements.
+ *
+ * If a predicate is specified, then returns the first element of the sequence that satisfies the predicate.
+ * Equivalent to `Where(pred) | FirstOrDefault()`.
+ *
+ * @usage
+ * AActor* Rosie = SomeActors | Where([](const AActor* A) { return GetNameSafe(A) == TEXT("Rosie"); }) | FirstOrDefault();
+ * AActor* Rosie = SomeActors | FirstOrDefault([](const AActor* A) { return GetNameSafe(A) == TEXT("Rosie"); });
+ */
 template <class _Pr = _IGRP AlwaysTrue>
 [[nodiscard]] constexpr auto FirstOrDefault(_Pr&& _Pred = {})
 {

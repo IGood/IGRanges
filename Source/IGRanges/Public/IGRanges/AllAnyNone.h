@@ -51,6 +51,13 @@ template <EAlgoChoice _Choice, class _Pr>
 /**
  * Returns True if all elements in the range satisfy the predicate (or the range is empty); otherwise, False.
  * If no predicate is specified, then elements themselves are tested for "truthiness".
+ *
+ * Alias for `std::all_of`:
+ * Checks if a unary predicate returns True for all elements in the range.
+ *
+ * @usage
+ * bool bAllEven = SomeNumbers | All([](int32 N) { return N % 2 == 0; });
+ * bool bAllGood = SomeStructs | All(&FBar::IsGood);
  */
 template <class _Pr = std::identity>
 [[nodiscard]] constexpr auto All(_Pr&& _Pred = {})
@@ -61,6 +68,12 @@ template <class _Pr = std::identity>
 /**
  * Returns True if any element in the range satisfies the predicate; otherwise, False.
  * If no predicate is specified, then returns whether there are any elements in the range at all.
+ *
+ * Alias for `std::any_of`:
+ * Checks if a unary predicate returns True for at least one element in the range.
+ *
+ * @usage
+ * bool bSomeGood = SomeStructs | Any(&FBar::IsGood);
  */
 template <class _Pr = _IGRP AlwaysTrue>
 [[nodiscard]] constexpr auto Any(_Pr&& _Pred = {})
@@ -71,6 +84,12 @@ template <class _Pr = _IGRP AlwaysTrue>
 /**
  * Returns True if no element in the range satisfies the predicate (or the range is empty); otherwise, False.
  * If no predicate is specified, then elements themselves are tested for "truthiness".
+ *
+ * Alias for `std::none_of`:
+ * Checks if a unary predicate returns True for no elements in the range.
+ *
+ * @usage
+ * bool bNoGood = SomeStructs | None(&FBar::IsGood);
  */
 template <class _Pr = std::identity>
 [[nodiscard]] constexpr auto None(_Pr&& _Pred = {})

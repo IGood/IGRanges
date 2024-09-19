@@ -35,11 +35,25 @@ struct ToArray_fn
 
 } // namespace Private
 
+/**
+ * Creates a `TArray` from a range.
+ *
+ * @usage
+ * TArray<int32> SquaredNumbers = SomeNumbers | Select([](int32 N) { return N * N; }) | ToArray();
+ */
 [[nodiscard]] inline constexpr auto ToArray()
 {
 	return std::ranges::_Range_closure<_IGRP ToArray_fn>{};
 }
 
+/**
+ * Same as `ToArray` (no parameters) but first applies a projection to elements.
+ * Equivalent to `Select(proj) | ToArray()`.
+ *
+ * @usage
+ * TArray<int32> SquaredNumbers = SomeNumbers | ToArray([](int32 N) { return N * N; });
+ * TArray<FString> Names = SomeObjects | ToArray([](auto&& Obj) { return GetNameSafe(Obj); });
+ */
 template <typename TransformT>
 [[nodiscard]] constexpr auto ToArray(TransformT&& Trans)
 {
