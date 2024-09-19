@@ -14,9 +14,9 @@ template <class T>
 }
 
 template <class T>
-[[nodiscard]] constexpr auto CastExact()
+[[nodiscard]] constexpr auto ExactCast()
 {
-	return std::views::transform([](auto&& x) { return ::CastExact<T>(x); });
+	return std::views::transform([](auto&& x) { return ::ExactCast<T>(x); });
 }
 
 template <class T>
