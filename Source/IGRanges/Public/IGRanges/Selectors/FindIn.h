@@ -11,24 +11,27 @@ namespace Selectors
 template <typename ContainerType>
 [[nodiscard]] constexpr auto FindIn(ContainerType& Container)
 {
-	return [&Container](auto&& Key) -> decltype(Container.Find(Key)) {
-		// If keys can be null-checked, then do that.
-		if constexpr (requires { Key == nullptr; })
-		{
-			if (Key == nullptr)
+	return [&Container](auto&& Key) {
+		// Lookup method is different for arrays & maps.
+		const auto DoLookup = [&] {
+			if constexpr (TIsTArray_V<ContainerType>)
 			{
-				return nullptr;
+				return Container.FindByKey(Key);
 			}
-		}
+			else
+			{
+				return Container.Find(Key);
+			}
+		};
 
-		// If the container has `FindByKey` (like arrays), then use that; otherwise, use `Find` (like maps).
-		if constexpr (requires { Container.FindByKey({}); })
+		// If keys can be null-checked, then do that.
+		if constexpr (requires { Key != nullptr; })
 		{
-			return Container.FindByKey(Key);
+			return (Key != nullptr) ? DoLookup() : nullptr;
 		}
 		else
 		{
-			return Container.Find(Key);
+			return DoLookup();
 		}
 	};
 }
