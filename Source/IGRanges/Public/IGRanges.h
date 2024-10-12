@@ -14,7 +14,7 @@
 #include "IGRanges/OfType.h"
 #include "IGRanges/Select.h"
 #include "IGRanges/Selectors/CDO.h"
-#include "IGRanges/Selectors/Find.h"
+#include "IGRanges/Selectors/FindIn.h"
 #include "IGRanges/Sum.h"
 #include "IGRanges/ToArray.h"
 #include "IGRanges/ToSet.h"

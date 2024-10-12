@@ -9,9 +9,9 @@ namespace IG::Ranges
 namespace Selectors
 {
 template <typename ContainerType>
-[[nodiscard]] constexpr auto Find(ContainerType& Container)
+[[nodiscard]] constexpr auto FindIn(ContainerType& Container)
 {
-	return [&Container](auto&& Key) -> decltype(Container.Find({})) {
+	return [&Container](auto&& Key) -> decltype(Container.Find(Key)) {
 		// If keys can be null-checked, then do that.
 		if constexpr (requires { Key == nullptr; })
 		{
