@@ -256,16 +256,7 @@ void FIGRangesBenchmarksSpec::Define()
 			return Counts;
 		};
 
-		auto IGRangesVersionA = [&, Counts = GetMap()]() mutable {
-			for (int32* Count : MyObjects | Lookup(Counts))
-			{
-				++(*Count);
-			}
-
-			return Counts;
-		};
-
-		auto IGRangesVersionB = [&, Counts = GetMap()]() mutable {
+		auto IGRangesVersion = [&, Counts = GetMap()]() mutable {
 			for (int32& Count : MyObjects | LookupRef(Counts))
 			{
 				++Count;
@@ -277,7 +268,7 @@ void FIGRangesBenchmarksSpec::Define()
 		// Sanity check that these versions produce the same results.
 		{
 			const FMapType Expected = BaselineVersion();
-			const FMapType IgrActual = IGRangesVersionA();
+			const FMapType IgrActual = IGRangesVersion();
 			const bool bSuccess = TestTrue("igr version results", IgrActual.OrderIndependentCompareEqual(Expected));
 			if (!bSuccess)
 			{
@@ -289,8 +280,7 @@ void FIGRangesBenchmarksSpec::Define()
 
 		constexpr int32 NumRuns = 7;
 		UE_BENCHMARK(NumRuns, BaselineVersion);
-		UE_BENCHMARK(NumRuns, IGRangesVersionA);
-		UE_BENCHMARK(NumRuns, IGRangesVersionB);
+		UE_BENCHMARK(NumRuns, IGRangesVersion);
 	});
 }
 
