@@ -19,7 +19,7 @@ namespace IG::Ranges
  * SomeNumbers | Where([](int32 N) { return N > 0; })
  * SomeStructs | Where([](const FBar& B) { return B.IsGood(); })
  * SomeStructs | Where(&FBar::IsGood)
- * SomeObjects | Where([](const UFoo* F) { return F != nullptr && F.IsGood(); })
+ * SomeObjects | Where([](const UFoo* F) { return F != nullptr && F->IsGood(); })
  */
 template <class _Pr>
 [[nodiscard]] constexpr auto Where(_Pr&& _Pred)
@@ -33,7 +33,7 @@ template <class _Pr>
  * Similar to `NonNull() | Where(filter)`.
  *
  * @usage
- * SomeObjects | SafeWhere([](const UFoo* F) { return F.IsGood(); })
+ * SomeObjects | SafeWhere([](const UFoo* F) { return F->IsGood(); })
  * SomeObjects | SafeWhere(&UFoo::IsGood)
  */
 template <class _Pr>
