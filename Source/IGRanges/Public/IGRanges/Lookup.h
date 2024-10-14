@@ -55,28 +55,31 @@ template <typename ContainerType>
  *
  * @usage
  * TArray<FGuid> SomeGuids;
- * TMap<FGuid, AActor*> MapOfIdsToActors;
+ * TMap<FGuid, TObjectPtr<AActor>> MapOfIdsToActors;
  * TArray<FBar> SomeStructs; // pretend `bool FBar::operator==(const FGuid& Id) const` exists
- * for (AActor** A : SomeGuids | Lookup(MapOfIdsToActors)) ...
+ * for (TObjectPtr<AActor>* A : SomeGuids | Lookup(MapOfIdsToActors)) ...
  * for (FBar* Bar : SomeGuids | Lookup(SomeStructs)) ...
  */
 template <typename ContainerType>
 [[nodiscard]] constexpr auto Lookup(ContainerType& Container)
 {
-	return std::views::transform(_IGRP LookupIn(Container)) | NonNull();
+	return std::views::transform(_IGRP LookupIn(Container)) | _IGR NonNull();
 }
 
 /**
  * Same as `Lookup` but yields references to elements instead of pointers.
  *
  * @usage
+ * TArray<FGuid> SomeGuids;
+ * TMap<FGuid, TObjectPtr<AActor>> MapOfIdsToActors;
+ * TArray<FBar> SomeStructs; // pretend `bool FBar::operator==(const FGuid& Id) const` exists
  * for (AActor* A : SomeGuids | LookupRef(MapOfIdsToActors)) ...
  * for (FBar& Bar : SomeGuids | LookupRef(SomeStructs)) ...
  */
 template <typename ContainerType>
 [[nodiscard]] constexpr auto LookupRef(ContainerType& Container)
 {
-	return std::views::transform(_IGRP LookupIn(Container)) | NonNullRef();
+	return std::views::transform(_IGRP LookupIn(Container)) | _IGR NonNullRef();
 }
 
 } // namespace IG::Ranges
