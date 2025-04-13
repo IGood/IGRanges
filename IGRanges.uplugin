@@ -1,7 +1,7 @@
 {
 	"FileVersion": 3,
-	"Version": 1,
-	"VersionName": "1.0",
+	"Version": 2,
+	"VersionName": "2.0",
 	"FriendlyName": "C++ Ranges for Unreal",
 	"Description": "Library that leverages Ranges (C++20) to provide LINQ (C#) style code patterns.",
 	"Category": "Programming",
