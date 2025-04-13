@@ -33,21 +33,22 @@ struct FirstOrDefault_fn
 	}
 };
 
-inline constexpr auto AlwaysTrue = [](auto&&) {
-	return true;
-};
-
 } // namespace Private
 
-template <class _Pr>
-[[nodiscard]] constexpr auto FirstOrDefault(_Pr&& _Pred)
+/**
+ * Returns the first element of a sequence, or a default-initialized value if the sequence contains no elements.
+ *
+ * If a predicate is specified, then returns the first element of the sequence that satisfies the predicate.
+ * Equivalent to `Where(pred) | FirstOrDefault()`.
+ *
+ * @usage
+ * AActor* Rosie = SomeActors | Where([](const AActor* A) { return GetNameSafe(A) == TEXT("Rosie"); }) | FirstOrDefault();
+ * AActor* Rosie = SomeActors | FirstOrDefault([](const AActor* A) { return GetNameSafe(A) == TEXT("Rosie"); });
+ */
+template <class _Pr = _IGRP AlwaysTrue>
+[[nodiscard]] constexpr auto FirstOrDefault(_Pr&& _Pred = {})
 {
 	return std::ranges::_Range_closure<_IGRP FirstOrDefault_fn, std::decay_t<_Pr>>{std::forward<_Pr>(_Pred)};
-}
-
-[[nodiscard]] inline constexpr auto FirstOrDefault()
-{
-	return _IGR FirstOrDefault(_IGRP AlwaysTrue);
 }
 
 } // namespace IG::Ranges

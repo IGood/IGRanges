@@ -3,6 +3,7 @@
 #pragma once
 
 #include "IGRanges/Accumulate.h"
+#include "IGRanges/AllAnyNone.h"
 #include "IGRanges/Cast.h"
 #include "IGRanges/Count.h"
 #include "IGRanges/CustomizationPoints.h"

@@ -48,35 +48,61 @@ template <typename T>
 
 } // namespace Private
 
+/**
+ * Filters the values of a range of UObjects based on a specified type.
+ * Performs a cast to the specified type and then filters null elements.
+ * Equivalent to `Cast<T>() | NonNull()`.
+ *
+ * All the "Of Type" range adapters are safe to accept null values and never yield null results.
+ *
+ * @usage
+ * SomeActors | OfType<UMyActor>()
+ * SomeComponents | OfType<UMeshComponent>()
+ */
 template <class T>
 [[nodiscard]] constexpr auto OfType()
 {
 	return _IGR Cast<T>() | _IGRP NonNull();
 }
 
+/**
+ * Same as `OfType<T>` but yields references to values instead of pointers.
+ */
 template <class T>
 [[nodiscard]] constexpr auto OfTypeRef()
 {
 	return _IGR Cast<T>() | _IGRP NonNull() | _IGRP Dereference();
 }
 
+/**
+ * Similar to `OfType<T>` but uses `ExactCast<T>`.
+ */
 template <class T>
-[[nodiscard]] constexpr auto OfTypeExact()
+[[nodiscard]] constexpr auto OfExactType()
 {
-	return _IGR CastExact<T>() | _IGRP NonNull();
+	return _IGR ExactCast<T>() | _IGRP NonNull();
 }
 
+/**
+ * Same as `OfExactType<T>` but yields references to values instead of pointers.
+ */
 template <class T>
-[[nodiscard]] constexpr auto OfTypeExactRef()
+[[nodiscard]] constexpr auto OfExactTypeRef()
 {
-	return _IGR CastExact<T>() | _IGRP NonNull() | _IGRP Dereference();
+	return _IGR ExactCast<T>() | _IGRP NonNull() | _IGRP Dereference();
 }
 
+/**
+ * Similar to `OfType<T>` (checks types) but does not perform a cast.
+ */
 [[nodiscard]] inline constexpr auto OfType(const UClass* Class)
 {
 	return std::views::filter([Class](auto&& x) { return _IGRP IsA(x, Class); });
 }
 
+/**
+ * Similar to `OfType` (one parameter) but yields references to values instead of pointers.
+ */
 [[nodiscard]] inline constexpr auto OfTypeRef(const UClass* Class)
 {
 	return _IGR OfType(Class) | _IGRP Dereference();

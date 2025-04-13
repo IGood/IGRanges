@@ -1,7 +1,6 @@
 ﻿// Copyright Ian Good
 
 #include "IGRanges/FirstOrDefault.h"
-#include "IGRanges/Impl/Common.h"
 #include "IGRangesInternal.h"
 #include "Misc/AutomationTest.h"
 #include <ranges>
@@ -85,8 +84,6 @@ END_DEFINE_SPEC(FIGRangesFirstOrDefaultSpec)
 
 void FIGRangesFirstOrDefaultSpec::Define()
 {
-	using namespace IG::Ranges;
-
 	static constexpr int32 SomeValues[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
 	static constexpr FMyNumber SomeNumbers[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
