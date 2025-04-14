@@ -11,6 +11,7 @@ namespace IG::Ranges
 {
 namespace Private
 {
+template<bool bValidate>
 struct NonNullRef_fn
 {
 	template <typename RangeType>
@@ -20,15 +21,31 @@ struct NonNullRef_fn
 
 		if constexpr (TIsTWeakPtr_V<T>) // Support for `TWeakPtr`
 		{
-			return std::forward<RangeType>(Range)
-				 | std::views::filter([](auto&& x) { return x.IsValid(); })
-				 | std::views::transform([](auto&& x) -> T::ElementType& { return *x.Pin().Get(); });
+			if constexpr (bValidate)
+			{
+				return std::forward<RangeType>(Range)
+					 | std::views::filter([](auto&& x) { return x.IsValid(); })
+					 | std::views::transform([](auto&& x) -> decltype(auto) { return std::ref(*x.Pin().Get()); });
+			}
+			else
+			{
+				return std::forward<RangeType>(Range)
+					 | std::views::transform([](auto&& x) -> decltype(auto) { return std::ref(*x.Pin().Get()); });
+			}
 		}
 		else
 		{
-			return std::forward<RangeType>(Range)
-				 | std::views::filter([](auto&& x) { return x != nullptr; })
-				 | std::views::transform([](auto&& x) -> decltype(*x)& { return *x; });
+			if constexpr (bValidate)
+			{
+				return std::forward<RangeType>(Range)
+					 | std::views::filter([](auto&& x) { return x != nullptr; })
+					 | std::views::transform([](auto&& x) -> decltype(auto) { return std::ref(*x); });
+			}
+			else
+			{
+				return std::forward<RangeType>(Range)
+					 | std::views::transform([](auto&& x) -> decltype(auto) { return std::ref(*x); });
+			}
 		}
 	}
 };
@@ -59,7 +76,23 @@ struct NonNullRef_fn
  */
 [[nodiscard]] inline constexpr auto NonNullRef()
 {
-	return std::ranges::_Range_closure<_IGRP NonNullRef_fn>{};
+	return std::ranges::_Range_closure<_IGRP NonNullRef_fn<true>>{};
+}
+
+/**
+ * Same as `NonNullRef` but skips validating pointer
+ */
+[[nodiscard]] inline constexpr auto NonNullRefChecked()
+{
+	return std::ranges::_Range_closure<_IGRP NonNullRef_fn<false>>{};
+}
+
+/**
+ * Same as `NonNullRefChecked`
+ */
+[[nodiscard]] inline constexpr auto ToRef()
+{
+	return NonNullRefChecked();
 }
 
 } // namespace IG::Ranges

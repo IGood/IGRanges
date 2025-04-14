@@ -58,7 +58,7 @@ bool TestRefs(const RangeType& Range)
 	}
 
 	int32 i = -1;
-	for (auto& X : Range | NonNullRef())
+	for (auto&& X : Range | NonNullRef())
 	{
 		++i;
 		UTEST_TRUE_EXPR(ExpectedPointers.IsValidIndex(i));
@@ -66,11 +66,11 @@ bool TestRefs(const RangeType& Range)
 		// Use `TestSame` (not `TestEqual`) because these are supposed to be references to the same object.
 		if constexpr (TIsTWeakPtr_V<T>) // Support for `TWeakPtr`
 		{
-			UTEST_SAME("non-null element", X, *ExpectedPointers[i].Pin().Get());
+			UTEST_SAME("non-null element", X.get(), *ExpectedPointers[i].Pin().Get());
 		}
 		else
 		{
-			UTEST_SAME("non-null element", X, *ExpectedPointers[i]);
+			UTEST_SAME("non-null element", X.get(), *ExpectedPointers[i]);
 		}
 	}
 

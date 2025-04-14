@@ -2,26 +2,67 @@
 
 #include "IGRanges/Cast.h"
 #include "IGRangesInternal.h"
+#include "IGRanges/OfType.h"
+#include "IGRanges/ToArray.h"
 #include "Misc/AutomationTest.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 
+namespace
+{
+
+enum class ECastType
+{
+	Cast,
+	ExactCast,
+	CastChecked,
+	CastCheckedWithArg,
+};
+
+template <class T>
+[[nodiscard]] constexpr auto CastCheckedNoArg()
+{
+	return IG::Ranges::CastChecked<T>();
+}
+
+template <class T>
+[[nodiscard]] constexpr auto CastCheckedNullAllowed()
+{
+	return IG::Ranges::CastChecked<T>(ECastCheckedType::NullAllowed);
+}
+
+}
 BEGIN_DEFINE_SPEC(FIGRangesCastSpec, "IG.Ranges.Cast", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
 
 /**
  * Given a range of pointer-like elements, tests that `IG::Ranges::Cast` behaves the same as `::Cast`.
  */
-template <class T, typename RangeType>
+template <class T, ECastType CastType, auto RangeCastFunctor, typename RangeType>
 bool TestPointers(const RangeType& Range)
 {
 	TArray<const T*> ExpectedPointers;
 	for (auto&& X : Range)
 	{
-		ExpectedPointers.Emplace(::Cast<T>(X));
+		if constexpr (CastType == ECastType::Cast)
+		{
+			ExpectedPointers.Emplace(Cast<T>(X));
+		}
+		else if constexpr (CastType == ECastType::ExactCast)
+		{
+			ExpectedPointers.Emplace(ExactCast<T>(X));
+		}
+		else if constexpr (CastType == ECastType::CastChecked)
+		{
+			ExpectedPointers.Emplace(CastChecked<T>(X));
+		}
+		else if constexpr (CastType == ECastType::CastCheckedWithArg)
+		{
+			ExpectedPointers.Emplace(CastChecked<T>(X, ECastCheckedType::NullAllowed));
+		}
 	}
 
 	int32 i = -1;
-	for (auto* X : Range | IG::Ranges::Cast<T>())
+	for (auto* X : Range | RangeCastFunctor())
 	{
 		++i;
 		UTEST_TRUE_EXPR(ExpectedPointers.IsValidIndex(i));
@@ -46,7 +87,18 @@ void TestPointers()
 	PointerType C = GetDefault<UClass>();  // is a UStruct
 	PointerType SomePointers[] = {nullptr, O, F, E, S, C, nullptr, nullptr, C, O, F, F, E, E};
 
-	TestPointers<const UField>(SomePointers);
+	using ExpectedPointerType = const UField;
+
+	TestPointers<ExpectedPointerType, ECastType::Cast, &IG::Ranges::Cast<ExpectedPointerType>>(SomePointers);
+	TestPointers<ExpectedPointerType, ECastType::ExactCast, &IG::Ranges::ExactCast<ExpectedPointerType>>(SomePointers);
+
+	using namespace IG::Ranges;
+	auto CheckedPointers = SomePointers
+		| OfType<ExpectedPointerType>()
+		| ToArray();
+
+	TestPointers<ExpectedPointerType, ECastType::CastChecked, &CastCheckedNoArg<ExpectedPointerType>>(CheckedPointers);
+	TestPointers<ExpectedPointerType, ECastType::CastCheckedWithArg, &CastCheckedNullAllowed<ExpectedPointerType>>(CheckedPointers);
 }
 
 END_DEFINE_SPEC(FIGRangesCastSpec)
