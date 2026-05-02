@@ -27,6 +27,12 @@ struct AlwaysTrue
 template <typename T>
 [[nodiscard]] T Construct()
 {
+	using TraitsType = TStructOpsTypeTraits<T>;
+	if constexpr (TraitsType::WithNoInitConstructor)
+	{
+		return T(EForceInit::ForceInit);
+	}
+
 	// For non-fundamental types (bool, int, etc.), use `EForceInit` if possible.
 	// This is desirable for things like `FVector` & `FQuat`.
 	if constexpr (!std::is_fundamental_v<T> && std::is_constructible_v<T, EForceInit>)

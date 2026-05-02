@@ -9,7 +9,7 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-BEGIN_DEFINE_SPEC(FIGRangesAllAnyNoneSpec, "IG.Ranges.AllAnyNone", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+BEGIN_DEFINE_SPEC(FIGRangesAllAnyNoneSpec, "IG.Ranges.AllAnyNone", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 static constexpr auto AlwaysTrue = [](auto&&) {
 	return true;
