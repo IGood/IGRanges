@@ -9,7 +9,7 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-DEFINE_SPEC(FIGRangesSumSpec, "IG.Ranges.Sum", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter);
+DEFINE_SPEC(FIGRangesSumSpec, "IG.Ranges.Sum", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter);
 
 void FIGRangesSumSpec::Define()
 {

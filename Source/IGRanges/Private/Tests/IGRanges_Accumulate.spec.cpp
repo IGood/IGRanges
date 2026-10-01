@@ -8,7 +8,7 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-DEFINE_SPEC(FIGRangesAccumulateSpec, "IG.Ranges.Accumulate", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter);
+DEFINE_SPEC(FIGRangesAccumulateSpec, "IG.Ranges.Accumulate", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter);
 
 void FIGRangesAccumulateSpec::Define()
 {

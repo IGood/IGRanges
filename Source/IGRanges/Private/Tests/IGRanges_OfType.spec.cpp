@@ -3,12 +3,11 @@
 #include "IGRanges/OfType.h"
 #include "IGRangesInternal.h"
 #include "Misc/AutomationTest.h"
-#include "UObject/MetaData.h"
 #include "UObject/Package.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-BEGIN_DEFINE_SPEC(FIGRangesOfTypeSpec, "IG.Ranges.OfType", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+BEGIN_DEFINE_SPEC(FIGRangesOfTypeSpec, "IG.Ranges.OfType", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 /**
  * Given a range of pointer-like elements, tests that `OfType` behaves the same as `Cast`.
@@ -51,10 +50,10 @@ void TestPointers()
 	PointerType A = GetDefault<UObject>();
 	PointerType B = GetDefault<UClass>();
 	PointerType C = GetDefault<UPackage>();
-	PointerType D = GetDefault<UMetaData>();
+	PointerType D = GetDefault<UFunction>();
 	PointerType SomePointers[] = {nullptr, A, B, C, D, nullptr, nullptr, D, A, D};
 
-	TestPointersOfType<const UMetaData>(SomePointers);
+	TestPointersOfType<const UFunction>(SomePointers);
 }
 
 /**
@@ -98,10 +97,10 @@ void TestPointersIsA()
 	PointerType A = GetDefault<UObject>();
 	PointerType B = GetDefault<UClass>();
 	PointerType C = GetDefault<UPackage>();
-	PointerType D = GetDefault<UMetaData>();
+	PointerType D = GetDefault<UFunction>();
 	PointerType SomePointers[] = {nullptr, A, B, C, D, nullptr, nullptr, D, A, D};
 
-	TestPointersIsA(SomePointers, UMetaData::StaticClass());
+	TestPointersIsA(SomePointers, UFunction::StaticClass());
 }
 
 END_DEFINE_SPEC(FIGRangesOfTypeSpec)

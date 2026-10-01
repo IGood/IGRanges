@@ -7,7 +7,7 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-BEGIN_DEFINE_SPEC(FIGRangesFirstOrDefaultSpec, "IG.Ranges.FirstOrDefault", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+BEGIN_DEFINE_SPEC(FIGRangesFirstOrDefaultSpec, "IG.Ranges.FirstOrDefault", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 constexpr struct FMyNumber
 {

@@ -7,7 +7,7 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-DEFINE_SPEC(FIGRangesCountSpec, "IG.Ranges.Count", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter);
+DEFINE_SPEC(FIGRangesCountSpec, "IG.Ranges.Count", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter);
 
 void FIGRangesCountSpec::Define()
 {

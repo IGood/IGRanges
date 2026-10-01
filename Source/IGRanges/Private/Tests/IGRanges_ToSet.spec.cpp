@@ -7,7 +7,7 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-BEGIN_DEFINE_SPEC(FIGRangesToSetSpec, "IG.Ranges.ToSet", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+BEGIN_DEFINE_SPEC(FIGRangesToSetSpec, "IG.Ranges.ToSet", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 void TestSet(const TSet<int32>& Actual, const TSet<int32>& Expected)
 {

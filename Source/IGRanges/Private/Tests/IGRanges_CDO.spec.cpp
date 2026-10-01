@@ -7,7 +7,7 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-BEGIN_DEFINE_SPEC(FIGRangesCDOSpec, "IG.Ranges.CDO", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+BEGIN_DEFINE_SPEC(FIGRangesCDOSpec, "IG.Ranges.CDO", EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 
 /**
  * Given a range of pointer-like elements, tests that `CDO` behaves the same as `GetDefaultObject`.
