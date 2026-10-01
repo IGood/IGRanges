@@ -201,18 +201,18 @@ void FIGRangesBenchmarksSpec::Define()
 			return (Elem != nullptr) ? Elem->GetName().Len() : 0;
 		};
 
-		/*const auto IGRangesVersion = [&]() {
+		const auto IGRangesVersion = [&]() {
 			return MyObjects | Sum(SumSelector);
-		};*/
+		};
 
 		// Sanity check that these versions produce the same results.
 		{
 			const int32 Expected = BaselineVersion();
 			const int32 StdActual = StdVersion();
-			////const int32 IgrActual = IGRangesVersion();
+			const int32 IgrActual = IGRangesVersion();
 			const bool bSuccess =
 				TestEqual("std version results", StdActual, Expected)
-				/*&& TestEqual("igr version results", IgrActual, Expected)*/;
+				&& TestEqual("igr version results", IgrActual, Expected);
 			if (!bSuccess)
 			{
 				return;
@@ -224,7 +224,7 @@ void FIGRangesBenchmarksSpec::Define()
 		constexpr int32 NumRuns = 7;
 		UE_BENCHMARK(NumRuns, BaselineVersion);
 		UE_BENCHMARK(NumRuns, StdVersion);
-		////UE_BENCHMARK(NumRuns, IGRangesVersion);
+		UE_BENCHMARK(NumRuns, IGRangesVersion);
 	});
 }
 

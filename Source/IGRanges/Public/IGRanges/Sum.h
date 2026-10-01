@@ -40,17 +40,6 @@ struct Sum_fn
 
 } // namespace Private
 
-template <typename TerminatorType>
-struct Terminal
-{
-	template <class RangeType, class SelfType>
-		requires std::same_as<SelfType, Terminal<TerminatorType>>
-	[[nodiscard]] friend constexpr auto operator|(RangeType&& Range, SelfType&& Terminator)
-	{
-		return TerminatorType{}(std::forward<RangeType>(Range));
-	}
-};
-
 /**
  * Computes the sum of a sequence of values by applying `operator+`.
  * Empty ranges return a default-initialized value.
@@ -62,11 +51,7 @@ struct Terminal
  */
 [[nodiscard]] inline constexpr auto Sum()
 {
-	/*
 	return std::ranges::_Range_closure<_IGRP Sum_fn>{};
-	/*/
-	return _IGR Terminal<_IGRP Sum_fn>{};
-	//*/
 }
 
 /**
