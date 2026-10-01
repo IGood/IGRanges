@@ -90,8 +90,8 @@ void FIGRangesSumSpec::Define()
 			return Acc + Elem.Len();
 		};
 		const int32 ExpectedSum = std::accumulate(SomeValues, SomeValues + UE_ARRAY_COUNT(SomeValues), int32{}, AddLen);
-		////const int32 ActualSum = SomeValues | Sum([](const FString& S) { return S.Len(); });
-		////TestEqual("sum int32", ActualSum, ExpectedSum);
+		const int32 ActualSum = SomeValues | Sum([](const FString& S) { return S.Len(); });
+		TestEqual("sum int32", ActualSum, ExpectedSum);
 	});
 }
 
